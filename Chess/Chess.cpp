@@ -2,6 +2,10 @@
 #include "Chess.h"
 #include"ChessFactory.h"
 #include "GridMap.h"
+#include "IdleState.h"
+#include "AttackingState.h"
+#include "MovingState.h"
+#include "DeadState.h"
 USING_NS_CC; 
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
@@ -11,6 +15,7 @@ Chess* Chess::create()
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->init()) {
             chessExample->autorelease();
+            chessExample->currentState = new IdleState(chessExample);
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
@@ -28,6 +33,7 @@ Chess* Chess::create(const std::string& filename)
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->initWithFile(filename) && chessExample->init()) {
             chessExample->autorelease();
+            chessExample->currentState = new IdleState(chessExample);
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
@@ -147,7 +153,9 @@ void Chess::reverseImg()
     this->setScaleX(this->getScaleX() * -1);
 }
 
-void Chess::moveAction(GridMap* gridMap)
+// Refactored with State Pattern
+// moveAction is moved to MovingState::action
+/*void Chess::moveAction(GridMap* gridMap)
 {
     HexCell* fromCell = gridMap->getCellAtPosition(atGridPosition);
     HexCell* toCell = gridMap->FindBattle(this, fromCell);
@@ -173,15 +181,16 @@ void Chess::moveAction(GridMap* gridMap)
         fromCell->isBooked = false;
         movePath.at(0)->isBooked = true;
         isAnimationPlaying = false;
-        this->changeState(Idle); // 或其他状态
+        this->changeState(new IdleState()); // 或其他状态
         });
 
     auto sequence = Sequence::create(move_Action, callback, nullptr);
     this->runAction(sequence);
     isAnimationPlaying = true;
-}
-
-void Chess::attackAction(GridMap* gridMap)
+}*/
+// Refactored with State Pattern
+// attackAction is moved to AttackingState::action
+/*void Chess::attackAction(GridMap* gridMap)
 {
     //先获得攻击对象
     Vector<HexCell*>enemyChessAround;
@@ -191,7 +200,7 @@ void Chess::attackAction(GridMap* gridMap)
     //为空说明对面死完了
     if (enemyChess == 0)
     {
-        changeState(Idle);
+        changeState(new IdleState());
         return;
     }
     Chess* attackObject = enemyChessAround.at(0)->chessInGrid;
@@ -207,7 +216,7 @@ void Chess::attackAction(GridMap* gridMap)
         if (attackObject) {
             attackObject->getHurt(ATK);
             if (attackObject->health <= 0)
-                attackObject->changeState(Dead);
+                attackObject->changeState(new DeadState());
         }
         //蓝条,放技能时不变
         if(!enable_skill)
@@ -223,7 +232,7 @@ void Chess::attackAction(GridMap* gridMap)
         }
 
         isAnimationPlaying = false;
-        this->changeState(Idle); // 或其他状态
+        this->changeState(new IdleState()); // 或其他状态
         });
     //回调函数对目标产生伤害
 
@@ -256,9 +265,10 @@ void Chess::attackAction(GridMap* gridMap)
     }
     isAnimationPlaying = true;
     
-}
-
-void Chess::deadAction(GridMap* gridMap)
+}*/
+// Refactored with State Pattern
+// deadAction is moved to DeadState::action
+/*void Chess::deadAction(GridMap* gridMap)
 {
     if (isAnimationPlaying) {
         this->stopAllActions();
@@ -282,7 +292,7 @@ void Chess::deadAction(GridMap* gridMap)
     //this->bluebar->runAction(fadeOut);
     gridMap->removeChessOfGrid(gridMap->getCellAtPosition(this->atGridPosition));
     //this->removeFromParentAndCleanup(true);
-}
+}*/
 
 
 void Chess::getHurt(int ATK)
@@ -315,7 +325,7 @@ void Chess::useSkill()
 
 }
 //dt是每一帧之间的时间差，实时更新状态
-void Chess::updateInBattle(float dt, GridMap* gridMap)
+/*void Chess::updateInBattle(float dt, GridMap* gridMap)
 {
     switch (currentState) {
         case Idle: {
@@ -354,12 +364,28 @@ void Chess::updateInBattle(float dt, GridMap* gridMap)
         default:
             break;
     }
+}*/
+
+// Refactored with State Pattern
+void Chess::updateInBattle(float dt, GridMap* gridMap) {
+    if (currentState) {
+        currentState->update(gridMap); // 将更新逻辑交给当前状态
+    }
 }
 
-void Chess::changeState(State newState)
+// Refactored with State Pattern
+void Chess::changeState(ChessState* newState)
 {
-    if (currentState == newState) return; // 状态未改变
+    //if (currentState == newState) return; // 状态未改变
+    //currentState = newState;
+    if (currentState) {
+        currentState->exitState();
+        delete currentState;
+    }
     currentState = newState;
+    if (currentState) {
+        currentState->enterState();
+    }
 }
 
 Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {

@@ -4,11 +4,13 @@
 #include "cocos2d.h"
 #include "HealthBar.h"
 #include "BlueBar.h"
-#include"AudioEngine.h"
+#include "AudioEngine.h"
+#include "ChessState.h"
 class GridMap;
 class HexCell;
 class Seat;
 class ChessFactory;
+class ChessState;
 USING_NS_CC;
 
 #define SET_SCALE 0.15//对棋子模型大小的缩放设置
@@ -28,6 +30,8 @@ USING_NS_CC;
 #define CHESS_HEALTH 100
 class Chess :public cocos2d::Sprite
 {
+private:
+	ChessState* currentState; // Refactored with State Pattern
 
 public://此处放属性变量
 
@@ -75,9 +79,9 @@ public://此处放属性变量
 
 	int playerNumber;//棋子所属的玩家编号
 
-	enum State { Idle, Moving, Attacking, Dead };
+	//enum State { Idle, Moving, Attacking, Dead };
 
-	State currentState = Idle;//保存当前棋子状态
+	//State currentState = Idle;//保存当前棋子状态
 
 	bool isAnimationPlaying = false;//是否正在播放动画
 
@@ -124,13 +128,13 @@ public:
 	void reverseImg();
 
 	//移动函数（包含其回调函数）
-	virtual void moveAction(GridMap* gridMap);
+	//virtual void moveAction(GridMap* gridMap);
 
 	//攻击函数
-	virtual void attackAction(GridMap* gridMap);
+	//virtual void attackAction(GridMap* gridMap);
 
 	//死亡函数
-	virtual void deadAction(GridMap* gridMap);
+	//virtual void deadAction(GridMap* gridMap);
 
 	//掉血函数
 	virtual void getHurt(int ATK);
@@ -142,7 +146,8 @@ public:
 	void updateInBattle(float dt, GridMap* gridMap);
 
 	//改变状态的函数
-	void changeState(State newState);
+	//void changeState(State newState); // Refactored with State Pattern
+	void changeState(ChessState* newState); // Refactored with State Pattern
 	bool isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessAround);
 
 	//初始化血条蓝条
