@@ -2,6 +2,10 @@
 #include "Chess.h"
 #include"ChessFactory.h"
 #include "GridMap.h"
+#include "IdleState.h"
+#include "AttackingState.h"
+#include "MovingState.h"
+#include "DeadState.h"
 USING_NS_CC; 
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
@@ -11,6 +15,7 @@ Chess* Chess::create()
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->init()) {
             chessExample->autorelease();
+            chessExample->currentState = new IdleState();
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
@@ -28,6 +33,7 @@ Chess* Chess::create(const std::string& filename)
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->initWithFile(filename) && chessExample->init()) {
             chessExample->autorelease();
+            chessExample->currentState = new IdleState();
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
@@ -38,7 +44,9 @@ Chess* Chess::create(const std::string& filename)
     }
     return nullptr;
 }
-
+// Refactored with Decorator Pattern
+// 留给Decorator实现
+/*
 bool Chess::init()
 {
     if (!Node::init()) {
@@ -47,6 +55,17 @@ bool Chess::init()
     }
     return true;
 }
+
+bool Chess::init(const std::string& filename)
+{
+    if (!Node::init()) {
+        throw std::runtime_error("Chess initialization failed: Node initialization failed");
+        return false;
+    }
+    return true;
+}
+*/
+
 void Chess::deleteChess()
 {
     if (this)
@@ -173,7 +192,7 @@ void Chess::moveAction(GridMap* gridMap)
         fromCell->isBooked = false;
         movePath.at(0)->isBooked = true;
         isAnimationPlaying = false;
-        this->changeState(Idle); // 或其他状态
+        this->changeState(new IdleState()); // 或其他状态
         });
 
     auto sequence = Sequence::create(move_Action, callback, nullptr);
@@ -191,7 +210,7 @@ void Chess::attackAction(GridMap* gridMap)
     //为空说明对面死完了
     if (enemyChess == 0)
     {
-        changeState(Idle);
+        changeState(new IdleState());
         return;
     }
     Chess* attackObject = enemyChessAround.at(0)->chessInGrid;
@@ -207,7 +226,7 @@ void Chess::attackAction(GridMap* gridMap)
         if (attackObject) {
             attackObject->getHurt(ATK);
             if (attackObject->health <= 0)
-                attackObject->changeState(Dead);
+                attackObject->changeState(new DeadState());
         }
         //蓝条,放技能时不变
         if(!enable_skill)
@@ -223,7 +242,7 @@ void Chess::attackAction(GridMap* gridMap)
         }
 
         isAnimationPlaying = false;
-        this->changeState(Idle); // 或其他状态
+        this->changeState(new IdleState()); // 或其他状态
         });
     //回调函数对目标产生伤害
 
@@ -315,7 +334,7 @@ void Chess::useSkill()
 
 }
 //dt是每一帧之间的时间差，实时更新状态
-void Chess::updateInBattle(float dt, GridMap* gridMap)
+/*void Chess::updateInBattle(float dt, GridMap* gridMap)
 {
     switch (currentState) {
         case Idle: {
@@ -354,12 +373,28 @@ void Chess::updateInBattle(float dt, GridMap* gridMap)
         default:
             break;
     }
+}*/
+
+// Refactored with State Pattern
+void Chess::updateInBattle(float dt, GridMap* gridMap) {
+    if (currentState) {
+        currentState->update(this, dt, gridMap); // 将更新逻辑交给当前状态
+    }
 }
 
-void Chess::changeState(State newState)
+// Refactored with State Pattern
+void Chess::changeState(ChessState* newState)
 {
-    if (currentState == newState) return; // 状态未改变
+    //if (currentState == newState) return; // 状态未改变
+    //currentState = newState;
+    if (currentState) {
+        currentState->exitState(this);
+        delete currentState;
+    }
     currentState = newState;
+    if (currentState) {
+        currentState->enterState(this);
+    }
 }
 
 Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {

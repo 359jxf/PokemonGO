@@ -2,21 +2,23 @@
 #ifndef YEVEE_H
 
 #include"cocos2d.h"
-#include"Chess.h"
+//#include"Chess.h"
+#include"ChessDecorator.h"
 
 USING_NS_CC;
 
-class Yevee :public Chess
+// Refactored with Decorator Pattern
+// class Yevee :public Chess
+class Yevee :public ChessDecorator
 {
 public:
-	//create一个伊布
 	static Yevee* create(const std::string& filename);
 
 	//重写init方法
-	bool init(const std::string& filename);
+	bool init(const std::string& filename) override;
 
-	virtual void useSkill() override;
-
-	virtual void getHurt(int ATK);
+	//重写useSkill方法
+	void useSkill() override;
 };
+
 #endif
