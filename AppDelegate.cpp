@@ -26,6 +26,9 @@
 #include "PrepareScene.h"
 #include "PlayerManager.h"
 #include "StartScene.h"
+#include "PluginLoader.h"
+#include "PluginManager.h"
+
  #define USE_AUDIO_ENGINE 1    //音乐
  //#define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -93,6 +96,24 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // 设置设计分辨率
     glview->setDesignResolutionSize(1280, 720, ResolutionPolicy::NO_BORDER);
+
+    //Refactored with Plugin Pattern
+    // 初始化插件管理器
+    auto pluginManager = std::make_unique<PluginManager>();
+    PluginLoader pluginLoader;
+
+    // 动态加载插件
+    PluginHandle handle = pluginLoader.loadPlugin("plugins/NewChessPlugin.dll");
+    if (handle) {
+        using CreatePluginFunc = ChessPlugin * (*)();
+        auto createPlugin = (CreatePluginFunc)pluginLoader.getPluginFunction(handle, "createPlugin");
+        if (createPlugin) {
+            pluginManager->registerChessPlugin(std::unique_ptr<ChessPlugin>(createPlugin()));
+        }
+    }
+
+    // 将插件管理器传递给 PlayerManager
+    PlayerManager::getInstance()->setPluginManager(std::move(pluginManager));
     
     //创建一个Player;测试用，增加了一个enemyPlayer
     Player* myPlayer = Player::create();
