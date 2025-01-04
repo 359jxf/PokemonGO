@@ -4,11 +4,13 @@
 #include "cocos2d.h"
 #include "HealthBar.h"
 #include "BlueBar.h"
-#include"AudioEngine.h"
+#include "AudioEngine.h"
+#include "ChessState.h"
 class GridMap;
 class HexCell;
 class Seat;
 class ChessFactory;
+class ChessState;
 USING_NS_CC;
 
 #define SET_SCALE 0.15//对棋子模型大小的缩放设置
@@ -26,8 +28,14 @@ USING_NS_CC;
 #define PRICE_STAR3_GRADE3 23//3星3阶卡的费用
 #define CHESS_ATK 10
 #define CHESS_HEALTH 100
-class Chess :public cocos2d::Sprite
+
+
+// Refactored with Decorator Pattern
+//class Chess :public cocos2d::Sprite
+class Chess : public cocos2d::Sprite, public IChess
 {
+private:
+	ChessState* currentState; // Refactored with State Pattern
 
 public://此处放属性变量
 
@@ -75,80 +83,40 @@ public://此处放属性变量
 
 	int playerNumber;//棋子所属的玩家编号
 
-	enum State { Idle, Moving, Attacking, Dead };
+	//enum State { Idle, Moving, Attacking, Dead };
 
-	State currentState = Idle;//保存当前棋子状态
+	//State currentState = Idle;//保存当前棋子状态
 
 	bool isAnimationPlaying = false;//是否正在播放动画
 
 	HealthBar* healthBar;//血条
 	BlueBar* bluebar;//蓝条
 public:
-	//初始化棋子
-	static Chess* create();
-
-	//初始化棋子,用文件名初始化
-	static Chess* create(const std::string& filename);
-
-	//删除棋子
-	void deleteChess();
-
-	//获得棋子id
-	int getId()const;
-
-	//获得棋子星级
-	int getStar()const;
-
-	//判断棋子是否在棋格
-	bool isInGrid()const;
-
-	//判断棋子是否在备战席上
-	bool isAtSeat()const;
-
-	// 根据输入的id值和星级创建一个棋子实例
-	static Chess* createByIdAndStar(int id, int star);
-
-	//单个棋子的初始化
-	virtual bool init() override;
-
-	//棋子的进化函数
-	virtual void upgrade();
-
-	//进化成等级2，在三合一时触发
-	virtual void upgradeToSecond(const std::string& filename);
-
-	//进化成等级3，在三合一时触发
-	virtual void upgradeToThird(const std::string& filename);
-
-	//将这个棋子反转
-	void reverseImg();
-
-	//移动函数（包含其回调函数）
-	virtual void moveAction(GridMap* gridMap);
-
-	//攻击函数
-	virtual void attackAction(GridMap* gridMap);
-
-	//死亡函数
-	virtual void deadAction(GridMap* gridMap);
-
-	//掉血函数
-	virtual void getHurt(int ATK);
-
-	//使用技能
-	virtual void useSkill();
-
-	//每帧调用以更新状态
-	void updateInBattle(float dt, GridMap* gridMap);
-
-	//改变状态的函数
-	void changeState(State newState);
-	bool isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessAround);
-
-	//初始化血条蓝条
-	void initHealthBar();
-	void initBlueBar();
+	// Refactored with Decorator Pattern
+	// IChess中函数的实现
+	Chess();
+	~Chess();
+	int getId() const override;
+	int getStar() const override;
+	bool isInGrid() const override;
+	bool isAtSeat() const override;
+	void moveAction(GridMap* gridMap) override;
+	void attackAction(GridMap* gridMap) override;
+	void deadAction(GridMap* gridMap) override;
+	void getHurt(int ATK) override;
+	void initHealthBar() override;
+	void initBlueBar() override;
+	void upgrade() override;
+	void upgradeToSecond(const std::string& filename) override;
+	void upgradeToThird(const std::string& filename) override;
+	void reverseImg() override;
+	void updateInBattle(float dt, GridMap* gridMap) override;
+	void changeState(ChessState* newState) override;
+	bool isEnemyInAttackRange(GridMap* gridMap, std::vector<HexCell*>& enemyChessAround) override;
+	void deleteChess() override;
+	Chess* create() override;
+	Chess* create(const std::string& filename) override;
+	Chess* createByIdAndStar(int id, int star) override;
 };
-
 
 #endif // Chess.h

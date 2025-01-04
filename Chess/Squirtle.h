@@ -1,20 +1,23 @@
 //杰尼龟 1阶
 #ifndef SQUIRTLE_H
 #include"cocos2d.h"
-#include"Chess.h"
+//#include"Chess.h"
+#include"ChessDecorator.h"
 
 USING_NS_CC;
 
-class Squirtle :public Chess
+// Refactored with Decorator Pattern
+// class Squirtle :public Chess
+class Squirtle :public ChessDecorator
 {
 public:
-	//create一个杰尼龟
 	static Squirtle* create(const std::string& filename);
 
 	//重写init方法
-	bool init(const std::string& filename);
+	bool init(const std::string& filename) override;
 
-	virtual void useSkill() override;
+	//重写useSkill方法
+	void useSkill() override;
 };
 
 #endif
