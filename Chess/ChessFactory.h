@@ -23,8 +23,12 @@
 USING_NS_CC;
 class ChessFactory
 {
+//Refactored with Plugin Pattern
 public:
-	static Chess* createChessById(int id);//创建不同id的1星棋子
+	ChessFactory(PluginManager& pluginManager);
+	Chess* createChessById(int id);//创建不同id的1星棋子
+private:
+	PluginManager& pluginManager;
 };
 
 #endif

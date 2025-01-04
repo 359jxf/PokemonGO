@@ -1,8 +1,17 @@
 #include "ChessFactory.h"
+#include "PluginManager.h"
+
+ChessFactory::ChessFactory(PluginManager& pluginManager) : pluginManager(pluginManager) {}
 
 Chess* ChessFactory::createChessById(int id)
 {
-	Chess* chess = nullptr;
+	//Refactored with Plugin Pattern
+	// 优先使用插件管理器创建棋子
+	Chess* chess = this->pluginManager.createChessById(id); // 通过 this-> 访问 pluginManager
+	if (chess) {
+		return chess; // 如果插件管理器成功创建棋子，则直接返回
+	}
+
 	switch (id)
 	{
 	case 11:
