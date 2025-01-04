@@ -9,19 +9,29 @@
 USING_NS_CC; 
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
+
+// Refactor with State Pattern
+Chess::~Chess()
+{
+    if (currentState) {
+        delete currentState;
+        currentState = nullptr; // é¿å…æ‚¬ç©ºæŒ‡é’ˆ
+    }
+}
+
 Chess* Chess::create()
 {
-    try {//Èç¹ûÔÚ new Chess() »ò chessExample->init() µÄ¹ı³ÌÖĞÅ×³öÒì³££¬ÄÇÃ´Òì³£ĞÅÏ¢½«±»²¶»ñ²¢Í¨¹ı CCLOG Êä³ö¡£
+    try {//å¦‚æœåœ¨ new Chess() æˆ– chessExample->init() çš„è¿‡ç¨‹ä¸­æŠ›å‡ºå¼‚å¸¸ï¼Œé‚£ä¹ˆå¼‚å¸¸ä¿¡æ¯å°†è¢«æ•è·å¹¶é€šè¿‡ CCLOG è¾“å‡ºã€‚
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->init()) {
             chessExample->autorelease();
-            chessExample->currentState = new IdleState();
+            chessExample->currentState = new IdleState(chessExample); // Refactored with State Pattern
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
     }
     catch (const std::exception& e) {
-        // ²¶»ñµ½Òì³£Ê±µÄ´¦ÀíÂß¼­
+        // æ•è·åˆ°å¼‚å¸¸æ—¶çš„å¤„ç†é€»è¾‘
         CCLOG("Exception caught: %s", e.what());
     }
     return nullptr;
@@ -33,19 +43,19 @@ Chess* Chess::create(const std::string& filename)
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->initWithFile(filename) && chessExample->init()) {
             chessExample->autorelease();
-            chessExample->currentState = new IdleState();
+            chessExample->currentState = new IdleState(chessExample); // Refactored with State Pattern
             return chessExample;
         }
         CC_SAFE_DELETE(chessExample);
     }
     catch (const std::exception& e) {
-        // ²¶»ñµ½Òì³£Ê±µÄ´¦ÀíÂß¼­
+        // æ•è·åˆ°å¼‚å¸¸æ—¶çš„å¤„ç†é€»è¾‘
         CCLOG("Exception caught: %s", e.what());
     }
     return nullptr;
 }
 // Refactored with Decorator Pattern
-// Áô¸øDecoratorÊµÏÖ
+// ç•™ç»™Decoratorå®ç°
 /*
 bool Chess::init()
 {
@@ -97,37 +107,38 @@ bool Chess::isAtSeat() const
     return atSeatPosition >= 0;
 }
 
-Chess* Chess::createByIdAndStar(int id, int star)//ÕâÀïµÄstarÊÇĞÎ²Î£¬±íÊ¾Éı¼¶´ÎÊı£¬ËüµÄ±ä»¯²»Ó°ÏìÆå×ÓÊµ¼ÊĞÇ¼¶
+Chess* Chess::createByIdAndStar(int id, int star)//è¿™é‡Œçš„staræ˜¯å½¢å‚ï¼Œè¡¨ç¤ºå‡çº§æ¬¡æ•°ï¼Œå®ƒçš„å˜åŒ–ä¸å½±å“æ£‹å­å®é™…æ˜Ÿçº§
 {
-    Chess* chess = ChessFactory::createChessById(id);//´Ë·½·¨´´½¨Æå×Ó£¬³õÊ¼Êµ¼ÊĞÇ¼¶Îª1
-    while (star > 1)//Èô´«ÈëĞÇ¼¶ÊÇ2£¬Éı¼¶Ò»´Î£»ĞÇ¼¶ÊÇ3£¬Éı¼¶Á½´Î
+    Chess* chess = ChessFactory::createChessById(id);//æ­¤æ–¹æ³•åˆ›å»ºæ£‹å­ï¼Œåˆå§‹å®é™…æ˜Ÿçº§ä¸º1
+    while (star > 1)//è‹¥ä¼ å…¥æ˜Ÿçº§æ˜¯2ï¼Œå‡çº§ä¸€æ¬¡ï¼›æ˜Ÿçº§æ˜¯3ï¼Œå‡çº§ä¸¤æ¬¡
     {
         chess->upgrade();
         star--;
     }
+    chess->currentState = new IdleState(chess); // Refactored with State Pattern
     chess->maxHP = chess->health;
     chess->initHealthBar();
     chess->initBlueBar();
     return chess;
 }
 
-//Õâ¸öº¯ÊıÓÃÓÚÑ°ÕÒ×Ö·û´®ÖĞµÄÒ»¸ö×Ö·û´®²¢½«ËûÌæ»»
-//originalÊÇÔ­×Ö·û´®£¬toReplaceÊÇ±»Ìæ»»µÄ×Ö·û´®£¬newStringÊÇÌæ»»ºóµÄ×Ö·û´®
+//è¿™ä¸ªå‡½æ•°ç”¨äºå¯»æ‰¾å­—ç¬¦ä¸²ä¸­çš„ä¸€ä¸ªå­—ç¬¦ä¸²å¹¶å°†ä»–æ›¿æ¢
+//originalæ˜¯åŸå­—ç¬¦ä¸²ï¼ŒtoReplaceæ˜¯è¢«æ›¿æ¢çš„å­—ç¬¦ä¸²ï¼ŒnewStringæ˜¯æ›¿æ¢åçš„å­—ç¬¦ä¸²
 std::string replaceSubstring(const std::string& original, const std::string& toReplace, const std::string& newString) {
     std::string result = original;
     size_t pos = 0;
-    //ÈôÕÒµ½ÁËtoReplace×Ö·û´®£¬½øÈëÑ­»·
+    //è‹¥æ‰¾åˆ°äº†toReplaceå­—ç¬¦ä¸²ï¼Œè¿›å…¥å¾ªç¯
     while ((pos = result.find(toReplace, pos)) != std::string::npos) {
-        result.replace(pos, toReplace.length(), newString);//Ö´ĞĞÌæ»»
+        result.replace(pos, toReplace.length(), newString);//æ‰§è¡Œæ›¿æ¢
         
-        pos += newString.length();// ¸üĞÂÎ»ÖÃ£¬Ç°½øĞÂ×Ö·û´®µÄ³¤¶È
+        pos += newString.length();// æ›´æ–°ä½ç½®ï¼Œå‰è¿›æ–°å­—ç¬¦ä¸²çš„é•¿åº¦
     }
     return result;
 }
 
 void Chess::upgrade()
 {   
-    if (this->star == 1)//ÕâÀïµÄstarÊÇÆå×ÓÊµ¼ÊĞÇ¼¶
+    if (this->star == 1)//è¿™é‡Œçš„staræ˜¯æ£‹å­å®é™…æ˜Ÿçº§
         upgradeToSecond(replaceSubstring(name, "1", "2"));
     else if (this->star == 2)
         upgradeToThird(replaceSubstring(name, "2", "3"));
@@ -140,10 +151,10 @@ void Chess::upgradeToSecond(const std::string& filename)
 {
     this->setTexture(filename);
     this->setScale(SET_SCALE * 1.25);
-    price=price*3-1;//Ç®
+    price=price*3-1;//é’±
     name = filename;
     star = 2;
-    //ÔÚ´Ë´¦¸üĞÂÔ­ÏÈ¶ÔÏóµÄ¸÷ÖÖÊı¾İ
+    //åœ¨æ­¤å¤„æ›´æ–°åŸå…ˆå¯¹è±¡çš„å„ç§æ•°æ®
     ATK += growATK;
     maxHP += growHP;
 }
@@ -152,10 +163,10 @@ void Chess::upgradeToThird(const std::string& filename)
 {
     this->setTexture(filename);
     this->setScale(SET_SCALE * 1.5);
-    price = price * 3 - 1;//Ç®
+    price = price * 3 - 1;//é’±
     name = filename;
     star = 3;
-    //ÔÚ´Ë´¦¸üĞÂÔ­ÏÈ¶ÔÏóµÄ¸÷ÖÖÊı¾İ
+    //åœ¨æ­¤å¤„æ›´æ–°åŸå…ˆå¯¹è±¡çš„å„ç§æ•°æ®
     ATK += growATK;
     maxHP += growHP;
 }
@@ -166,48 +177,51 @@ void Chess::reverseImg()
     this->setScaleX(this->getScaleX() * -1);
 }
 
-void Chess::moveAction(GridMap* gridMap)
+// Refactored with State Pattern
+// moveAction is moved to MovingState::action
+/*void Chess::moveAction(GridMap* gridMap)
 {
     HexCell* fromCell = gridMap->getCellAtPosition(atGridPosition);
     HexCell* toCell = gridMap->FindBattle(this, fromCell);
-    //»ñµÃÂ·¾¶
+    //è·å¾—è·¯å¾„
     Vector<HexCell*> movePath;
     gridMap->FindPath(movePath, this, fromCell, toCell, attackRange);
     if (movePath.size() <= 0)
         return;
-    //ÈÃ¿ªÊ¼µÄÒÆ¶¯Î»ÖÃÍ£Ö¹±»Ô¤¶¨£¬ÒÆ¶¯Â·ÉÏµÄÆå×Ó¿ªÊ¼±»Ô¤¶¨
+    //è®©å¼€å§‹çš„ç§»åŠ¨ä½ç½®åœæ­¢è¢«é¢„å®šï¼Œç§»åŠ¨è·¯ä¸Šçš„æ£‹å­å¼€å§‹è¢«é¢„å®š
     fromCell->isBooked = false;
     movePath.at(0)->isBooked = true;
 
-    //ÒÔÆå×Óµ±Ç°Î»ÖÃÎªÆğµã£¬Ä¿±êÎ»ÖÃÎªÖÕµã£¬³ÖĞøÊ±¼äÎª¾àÀë³ıÒÔÒÆ¶¯ËÙ¶È
+    //ä»¥æ£‹å­å½“å‰ä½ç½®ä¸ºèµ·ç‚¹ï¼Œç›®æ ‡ä½ç½®ä¸ºç»ˆç‚¹ï¼ŒæŒç»­æ—¶é—´ä¸ºè·ç¦»é™¤ä»¥ç§»åŠ¨é€Ÿåº¦
     auto targetPosition = movePath.at(0)->getPosition();
     auto distance = targetPosition.distance(this->getPosition());
     auto move_Action = MoveTo::create(distance / (moveSpeed * 100), targetPosition);
 
     auto callback = CallFunc::create([=]() {
-        // ¶¯»­Íê³ÉºóµÄ»Øµ÷,½«Æå×Ó·ÅÖÃµ½ĞÂµÄÎ»ÖÃ
+        // åŠ¨ç”»å®Œæˆåçš„å›è°ƒ,å°†æ£‹å­æ”¾ç½®åˆ°æ–°çš„ä½ç½®
         gridMap->addChessToGrid(this, movePath.at(0));
         gridMap->removeChessOfGrid(fromCell);
-        //×¢Òâ»Øµ÷º¯ÊıÖĞĞèÒªÖØĞÂÉèÖÃbookµÄÎ»ÖÃ
+        //æ³¨æ„å›è°ƒå‡½æ•°ä¸­éœ€è¦é‡æ–°è®¾ç½®bookçš„ä½ç½®
         fromCell->isBooked = false;
         movePath.at(0)->isBooked = true;
         isAnimationPlaying = false;
-        this->changeState(new IdleState()); // »òÆäËû×´Ì¬
+        this->changeState(new IdleState()); // æˆ–å…¶ä»–çŠ¶æ€
         });
 
     auto sequence = Sequence::create(move_Action, callback, nullptr);
     this->runAction(sequence);
     isAnimationPlaying = true;
-}
-
-void Chess::attackAction(GridMap* gridMap)
+}*/
+// Refactored with State Pattern
+// attackAction is moved to AttackingState::action
+/*void Chess::attackAction(GridMap* gridMap)
 {
-    //ÏÈ»ñµÃ¹¥»÷¶ÔÏó
+    //å…ˆè·å¾—æ”»å‡»å¯¹è±¡
     Vector<HexCell*>enemyChessAround;
     bool findEnemy = isEnemyInAttackRange(gridMap, enemyChessAround);
-    int enemyChess = enemyChessAround.size();//enemyChessAroundÕâÊÇ»ñµÃÁËËùÓĞµÄ¹¥»÷·¶Î§ÄÚµÄµĞ·½Æå×Ó
-    //ÓÃÒ»¸öVector´æ´¢ËùÓĞµÄµĞ·½Æå×ÓÊÇ±ãÓÚºóĞøÈºÌå¹¥»÷
-    //Îª¿ÕËµÃ÷¶ÔÃæËÀÍêÁË
+    int enemyChess = enemyChessAround.size();//enemyChessAroundè¿™æ˜¯è·å¾—äº†æ‰€æœ‰çš„æ”»å‡»èŒƒå›´å†…çš„æ•Œæ–¹æ£‹å­
+    //ç”¨ä¸€ä¸ªVectorå­˜å‚¨æ‰€æœ‰çš„æ•Œæ–¹æ£‹å­æ˜¯ä¾¿äºåç»­ç¾¤ä½“æ”»å‡»
+    //ä¸ºç©ºè¯´æ˜å¯¹é¢æ­»å®Œäº†
     if (enemyChess == 0)
     {
         changeState(new IdleState());
@@ -215,20 +229,20 @@ void Chess::attackAction(GridMap* gridMap)
     }
     Chess* attackObject = enemyChessAround.at(0)->chessInGrid;
 
-    //µ±Ç°ÄÜÊÍ·Å¼¼ÄÜ
+    //å½“å‰èƒ½é‡Šæ”¾æŠ€èƒ½
     if (this->enable_skill) {
         useSkill();
     }
     
-    //»Øµ÷º¯Êı¶ÔÄ¿±ê²úÉúÉËº¦
+    //å›è°ƒå‡½æ•°å¯¹ç›®æ ‡äº§ç”Ÿä¼¤å®³
     auto callback = CallFunc::create([=]() {
-        // ¶¯»­Íê³ÉºóµÄ»Øµ÷,¶ÔÄ¿±êÊµ¼ÊÔì³ÉÉËº¦
+        // åŠ¨ç”»å®Œæˆåçš„å›è°ƒ,å¯¹ç›®æ ‡å®é™…é€ æˆä¼¤å®³
         if (attackObject) {
             attackObject->getHurt(ATK);
             if (attackObject->health <= 0)
                 attackObject->changeState(new DeadState());
         }
-        //À¶Ìõ,·Å¼¼ÄÜÊ±²»±ä
+        //è“æ¡,æ”¾æŠ€èƒ½æ—¶ä¸å˜
         if(!enable_skill)
         {
             this->currentBlueBar += 5;
@@ -242,23 +256,23 @@ void Chess::attackAction(GridMap* gridMap)
         }
 
         isAnimationPlaying = false;
-        this->changeState(new IdleState()); // »òÆäËû×´Ì¬
+        this->changeState(new IdleState()); // æˆ–å…¶ä»–çŠ¶æ€
         });
-    //»Øµ÷º¯Êı¶ÔÄ¿±ê²úÉúÉËº¦
+    //å›è°ƒå‡½æ•°å¯¹ç›®æ ‡äº§ç”Ÿä¼¤å®³
 
-    //½üÕ½¹¥»÷
+    //è¿‘æˆ˜æ”»å‡»
     if(isMelee==1){
-        //²¥·Å¶Ô¹¥»÷¶ÔÏó,ÉèÏëÊÇ¶¥Ò»ÏÂ,Ô¶³ÌÄ¿±êĞèÒªĞŞ¸Ä
+        //æ’­æ”¾å¯¹æ”»å‡»å¯¹è±¡,è®¾æƒ³æ˜¯é¡¶ä¸€ä¸‹,è¿œç¨‹ç›®æ ‡éœ€è¦ä¿®æ”¹
         Vec2 position = attackObject->getPosition() - this->getPosition();
         position = Vec2(position.x / ATTACK_MOVE, position.y / ATTACK_MOVE);
 
         float attackDuration = 1.0f / (10 * attackSpeed);
         auto moveBackAction = MoveBy::create(attackDuration, position);
-        auto moveBackReverseAction = moveBackAction->reverse();  // ÒÆ»ØÔ­Ê¼Î»ÖÃ
+        auto moveBackReverseAction = moveBackAction->reverse();  // ç§»å›åŸå§‹ä½ç½®
         auto sequence1 = Sequence::create(moveBackAction, moveBackReverseAction, callback, nullptr);
         this->runAction(sequence1);
     }
-    //Ô¶³Ì¹¥»÷£¬·¢ÉäĞÇĞÇ
+    //è¿œç¨‹æ”»å‡»ï¼Œå‘å°„æ˜Ÿæ˜Ÿ
     else {
         auto bullet = Sprite::create();
         bullet->setTexture("SliderNode_Normal.png");
@@ -275,45 +289,46 @@ void Chess::attackAction(GridMap* gridMap)
     }
     isAnimationPlaying = true;
     
-}
-
-void Chess::deadAction(GridMap* gridMap)
+}*/
+// Refactored with State Pattern
+// deadAction is moved to DeadState::action
+/*void Chess::deadAction(GridMap* gridMap)
 {
     if (isAnimationPlaying) {
         this->stopAllActions();
     }
 
-    // ´¦ÀíËÀÍöÂß¼­
+    // å¤„ç†æ­»äº¡é€»è¾‘
     auto fadeOut = FadeOut::create(0.3f);
 
-    // ´´½¨Sequence¶¯×÷£¬°üº¬µ­³ö¶¯×÷ºÍ»Øµ÷º¯Êı£¨ÒÆ³ı½ÚµãµÄÂß¼­£©
+    // åˆ›å»ºSequenceåŠ¨ä½œï¼ŒåŒ…å«æ·¡å‡ºåŠ¨ä½œå’Œå›è°ƒå‡½æ•°ï¼ˆç§»é™¤èŠ‚ç‚¹çš„é€»è¾‘ï¼‰
     auto sequence = Sequence::create(
         fadeOut,
         CallFunc::create([this, gridMap]() {
-            this->removeFromParentAndCleanup(true); // ÒÆ³ı²¢Ö´ĞĞÇåÀí²Ù×÷
+            this->removeFromParentAndCleanup(true); // ç§»é™¤å¹¶æ‰§è¡Œæ¸…ç†æ“ä½œ
             }),
         nullptr
                 );
 
-    // ¶Ô½ÇÉ«¡¢ÑªÌõºÍÀ¶Ìõ·Ö±ğÓ¦ÓÃ¶ÀÁ¢µÄSequence¶¯×÷
+    // å¯¹è§’è‰²ã€è¡€æ¡å’Œè“æ¡åˆ†åˆ«åº”ç”¨ç‹¬ç«‹çš„SequenceåŠ¨ä½œ
     this->runAction(sequence);
     //this->healthBar->runAction(fadeOut);
     //this->bluebar->runAction(fadeOut);
     gridMap->removeChessOfGrid(gridMap->getCellAtPosition(this->atGridPosition));
     //this->removeFromParentAndCleanup(true);
-}
+}*/
 
 
 void Chess::getHurt(int ATK)
 {
-    //ÑªÌõ´¦Àí
+    //è¡€æ¡å¤„ç†
     this->health -= ATK;
     float percentage_health = 100.0 * health / maxHP;
     if (percentage_health < 0)
         percentage_health = 0;
     healthBar->setPercentage(percentage_health);
 
-    //À¶Ìõ´¦Àí
+    //è“æ¡å¤„ç†
     if(!enable_skill)
     {
         this->currentBlueBar += 5;
@@ -325,7 +340,7 @@ void Chess::getHurt(int ATK)
         }
         bluebar->setPercentage(percentage_blue);
     }
-    // ¿É´´½¨µôÑª¶¯»­£¬µ«²»±ØÒª 
+    // å¯åˆ›å»ºæ‰è¡€åŠ¨ç”»ï¼Œä½†ä¸å¿…è¦ 
 }
 
 void Chess::useSkill()
@@ -333,34 +348,34 @@ void Chess::useSkill()
     CCLOG("USESKILL");
 
 }
-//dtÊÇÃ¿Ò»Ö¡Ö®¼äµÄÊ±¼ä²î£¬ÊµÊ±¸üĞÂ×´Ì¬
+//dtæ˜¯æ¯ä¸€å¸§ä¹‹é—´çš„æ—¶é—´å·®ï¼Œå®æ—¶æ›´æ–°çŠ¶æ€
 /*void Chess::updateInBattle(float dt, GridMap* gridMap)
 {
     switch (currentState) {
         case Idle: {
-            //¼ì²éÊÇ·ñÓĞ¿É¹¥»÷µÄµĞÈË
+            //æ£€æŸ¥æ˜¯å¦æœ‰å¯æ”»å‡»çš„æ•Œäºº
             Vector<HexCell*>a;
             if (isEnemyInAttackRange(gridMap, a))
-                // Èç¹ûÓĞ£¬ÇĞ»»µ½¹¥»÷×´Ì¬
+                // å¦‚æœæœ‰ï¼Œåˆ‡æ¢åˆ°æ”»å‡»çŠ¶æ€
                 changeState(Attacking);
             else
-                // Èç¹ûÃ»ÓĞ£¬³¢ÊÔÒÆ¶¯
+                // å¦‚æœæ²¡æœ‰ï¼Œå°è¯•ç§»åŠ¨
                 changeState(Moving);
             break;
         }
         case Moving: {
-            // Ö´ĞĞÒÆ¶¯Âß¼­
-            // µ½´ïÄ¿µÄµØºó£¬ÇĞ»»µ½¿ÕÏĞ»ò¹¥»÷×´Ì¬
+            // æ‰§è¡Œç§»åŠ¨é€»è¾‘
+            // åˆ°è¾¾ç›®çš„åœ°åï¼Œåˆ‡æ¢åˆ°ç©ºé—²æˆ–æ”»å‡»çŠ¶æ€
 
-            if (!isAnimationPlaying) {//Ö´ĞĞmoveÂß¼­µÄÇ°ÌáÊÇ²»ÄÜ²¥·Å¶¯»­
+            if (!isAnimationPlaying) {//æ‰§è¡Œmoveé€»è¾‘çš„å‰ææ˜¯ä¸èƒ½æ’­æ”¾åŠ¨ç”»
                 moveAction(gridMap);
             }
             break;
         }
         case Attacking: {
-            if (!isAnimationPlaying)//Ö»ÓĞÔÚ·Ç²¥·Å¶¯»­Ê±µ÷ÓÃ
+            if (!isAnimationPlaying)//åªæœ‰åœ¨éæ’­æ”¾åŠ¨ç”»æ—¶è°ƒç”¨
             {
-                //¹¥»÷¶¯×÷
+                //æ”»å‡»åŠ¨ä½œ
                 attackAction(gridMap);
             }
             break;
@@ -378,40 +393,40 @@ void Chess::useSkill()
 // Refactored with State Pattern
 void Chess::updateInBattle(float dt, GridMap* gridMap) {
     if (currentState) {
-        currentState->update(this, dt, gridMap); // ½«¸üĞÂÂß¼­½»¸øµ±Ç°×´Ì¬
+        currentState->update(gridMap); // å°†æ›´æ–°é€»è¾‘äº¤ç»™å½“å‰çŠ¶æ€
     }
 }
 
 // Refactored with State Pattern
 void Chess::changeState(ChessState* newState)
 {
-    //if (currentState == newState) return; // ×´Ì¬Î´¸Ä±ä
+    //if (currentState == newState) return; // çŠ¶æ€æœªæ”¹å˜
     //currentState = newState;
     if (currentState) {
-        currentState->exitState(this);
+        currentState->exitState();
         delete currentState;
     }
     currentState = newState;
     if (currentState) {
-        currentState->enterState(this);
+        currentState->enterState();
     }
 }
 
 Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {
-    //´´½¨ÏàÁÚ¸ñ×ÓÈİÆ÷
+    //åˆ›å»ºç›¸é‚»æ ¼å­å®¹å™¨
     Vector<HexCell*> neighbors;
-    //Ä¿±ê¸ñ×ÓÎ»ÖÃ
+    //ç›®æ ‡æ ¼å­ä½ç½®
     int x = cell->coordinateInBoard.x;
     int y = cell->coordinateInBoard.y;
 
-    // ÕâĞ©ÊÇÅ¼ÊıĞĞµÄÏàÁÚ¸ñ×Ó
+    // è¿™äº›æ˜¯å¶æ•°è¡Œçš„ç›¸é‚»æ ¼å­
     Vec2 evenOffsets[6] = { {+1,  0}, { 0, -1}, {-1, -1},
                            {-1,  0}, {-1, +1}, { 0, +1} };
-    // ÕâĞ©ÊÇÆæÊıĞĞµÄÏàÁÚ¸ñ×Ó
+    // è¿™äº›æ˜¯å¥‡æ•°è¡Œçš„ç›¸é‚»æ ¼å­
     Vec2 oddOffsets[6] = { {+1,  0}, {+1, -1}, { 0, -1},
                            {-1,  0}, { 0, +1}, {+1, +1} };
 
-    //ÒÀ´ÎÅĞ¶ÏÖÜÎ§µÄÁù¸ö¸ñ×ÓÊÇ·ñÔÚÆåÅÌºÏ·¨·¶Î§£¬²¢¼ÓÈëÈİÆ÷
+    //ä¾æ¬¡åˆ¤æ–­å‘¨å›´çš„å…­ä¸ªæ ¼å­æ˜¯å¦åœ¨æ£‹ç›˜åˆæ³•èŒƒå›´ï¼Œå¹¶åŠ å…¥å®¹å™¨
     for (int i = 0; i < 6; ++i) {
         Vec2 offset = (y % 2 == 0) ? evenOffsets[i] : oddOffsets[i];
         Vec2 neighborCoord = Vec2(x + offset.x, y + offset.y);
@@ -422,16 +437,16 @@ Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {
     return neighbors;
 }
 
-//enemyChessAround±£´æ¹¥»÷·¶Î§µÄµĞ·½Æå×Ó
+//enemyChessAroundä¿å­˜æ”»å‡»èŒƒå›´çš„æ•Œæ–¹æ£‹å­
 bool Chess::isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessAround) {
-    std::set<Vec2> checkedCells; // ÓÃÓÚ±ÜÃâÖØ¸´¼ì²é
-    std::queue<Vec2> cellsToCheck; // ÓÃÓÚ±£´æ´ı¼ì²éµÄ¸ñ×Ó×ø±ê
-    cellsToCheck.push(atGridPosition); // µ±Ç°Æå×ÓËùÔÚµÄ¸ñ×Ó
+    std::set<Vec2> checkedCells; // ç”¨äºé¿å…é‡å¤æ£€æŸ¥
+    std::queue<Vec2> cellsToCheck; // ç”¨äºä¿å­˜å¾…æ£€æŸ¥çš„æ ¼å­åæ ‡
+    cellsToCheck.push(atGridPosition); // å½“å‰æ£‹å­æ‰€åœ¨çš„æ ¼å­
     checkedCells.insert(atGridPosition);
 
     int boolFlag = 0;
     int currentRange = 1;
-    //¹ã¶ÈÓÅÏÈËÑË÷
+    //å¹¿åº¦ä¼˜å…ˆæœç´¢
     while (!cellsToCheck.empty() && currentRange <= attackRange) {
         int size = cellsToCheck.size();
         for (int i = 0; i < size; ++i) {
@@ -439,14 +454,14 @@ bool Chess::isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessA
             cellsToCheck.pop();
 
             HexCell* currentCell = gridMap->getCellAtPosition(currentCellCoord);
-            Vector<HexCell*> neighbors = getNeighbors(currentCell, gridMap); // »ñÈ¡ÁÚ¾ÓµÄº¯Êı
+            Vector<HexCell*> neighbors = getNeighbors(currentCell, gridMap); // è·å–é‚»å±…çš„å‡½æ•°
 
             for (auto& neighbor : neighbors) {
                 Vec2 coord = neighbor->coordinateInBoard;
                 if (checkedCells.find(coord) == checkedCells.end()) {
                     if (neighbor->chessInGrid && neighbor->chessInGrid->playerNumber != playerNumber) {
                         enemyChessAround.pushBack(neighbor);
-                        boolFlag++; // ÕÒµ½µĞ·½Æå×Ó
+                        boolFlag++; // æ‰¾åˆ°æ•Œæ–¹æ£‹å­
                     }
                     cellsToCheck.push(coord);
                     checkedCells.insert(coord);
@@ -461,8 +476,8 @@ bool Chess::isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessA
 void Chess::initHealthBar()
 {
     healthBar = HealthBar::create("Blood1.png", "Blood2.png", 100.0f);
-    healthBar->setScale(3);//Ëõ·Å
-    healthBar->setPosition(Vec2(100, 450));//Î»ÖÃ
+    healthBar->setScale(3);//ç¼©æ”¾
+    healthBar->setPosition(Vec2(100, 450));//ä½ç½®
     this->addChild(healthBar);
 }
 
