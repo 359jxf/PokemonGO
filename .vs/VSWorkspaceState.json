@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Chess",
+    "\\ChessPlugin",
+    "\\ChessRelated",
+    "\\Map",
+    "\\Player"
+  ],
+  "SelectedNode": "\\ChessPlugin\\PluginManager.cpp",
+  "PreviewInSolutionExplorer": false
+}
