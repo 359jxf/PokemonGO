@@ -472,8 +472,8 @@ void Player::buyChess()
         if(myStore->idInStore[i]!=-1&& myStore->idInStore[i]!=-2)
         {
             //会被释放吗
-            Chess* storeChess = ChessFactory::createChessById(myStore->idInStore[i]);
-
+            // Chess* storeChess = ChessFactory::createChessById(myStore->idInStore[i]);
+			Chess* storeChess = PrototypeRegistry::getById(myStore->idInStore[i]);//原型模式
 
             //若已达人口上限
             //若当前卡槽的棋子买了后,不能合成,则不买

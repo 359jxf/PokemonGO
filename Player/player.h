@@ -6,7 +6,8 @@
 #include "GridMap.h"
 #include"Store.h"
 #include "LittleHero.h"
-#include"ChessFactory.h"
+// #include"ChessFactory.h"
+#include "PrototypeRegistry.h"
 USING_NS_CC;
 class Player : public Ref {
 public:

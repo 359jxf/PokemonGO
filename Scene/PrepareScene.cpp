@@ -7,42 +7,42 @@ USING_NS_CC;
 
 Scene* PrepareScene::createScene()
 {
-    // ´´½¨Ò»¸ö³¡¾°¶ÔÏó£¬¸Ã¶ÔÏó½«ÓÉ×Ô¶¯ÊÍ·Å³Ø×Ô¶¯ÊÍ·Å
+    // åˆ›å»ºä¸€ä¸ªåœºæ™¯å¯¹è±¡ï¼Œè¯¥å¯¹è±¡å°†ç”±è‡ªåŠ¨é‡Šæ”¾æ± è‡ªåŠ¨é‡Šæ”¾
     auto scene = PrepareScene::create();
     return scene;
 }
 
 bool PrepareScene::init()
 {
-    // Ê×ÏÈµ÷ÓÃ»ùÀàµÄinit·½·¨
+    // é¦–å…ˆè°ƒç”¨åŸºç±»çš„initæ–¹æ³•
     if (!Scene::init())
     {
         return false;
     }
     // refactoring by composite pattern
-    ////»ØÍË°´Å¥
+    ////å›é€€æŒ‰é’®
     //initBack();
 
     //initPlayer();
 
-    ////Ìí¼Ó±³¾°Í¼Æ¬
+    ////æ·»åŠ èƒŒæ™¯å›¾ç‰‡
     //initBackground();
 
-    ////´´½¨³õÊ¼ÆåÅÌ
+    ////åˆ›å»ºåˆå§‹æ£‹ç›˜
     //initGridMap();
 
 
-    ////´´½¨±¸Õ½Ï¯
+    ////åˆ›å»ºå¤‡æˆ˜å¸­
     //initPreparationSeats();
 
-    ////´´½¨ÉÌµê
+    ////åˆ›å»ºå•†åº—
     //initStore();
 
 
-    ////³õÊ¼»¯Ğ¡Ğ¡Ó¢ĞÛ
+    ////åˆå§‹åŒ–å°å°è‹±é›„
     //initLittleHero();
 
-    ////³õÊ¼»¯µ¹¼ÆÊ±
+    ////åˆå§‹åŒ–å€’è®¡æ—¶
     //initPrepareLabel();
 
     CountdownLabel* countdownLabel = new CountdownLabel();
@@ -73,11 +73,11 @@ bool PrepareScene::init()
     }
     this->addChild(sceneComponents);
 
-    //ÆôÓÃÊó±ê¼àÌıÆ÷
+    //å¯ç”¨é¼ æ ‡ç›‘å¬å™¨
     this->enableMouseListener();
     gridMap->enableMouseListener();
 
-    this->schedule(schedule_selector(PrepareScene::updateCountdownLabel), 0.01f);  // Ã¿¸ô1Ãë¸üĞÂÒ»´ÎLabel
+    this->schedule(schedule_selector(PrepareScene::updateCountdownLabel), 0.01f);  // æ¯éš”1ç§’æ›´æ–°ä¸€æ¬¡Label
 
     return true;
 }
@@ -92,7 +92,7 @@ void draw() {
 //void PrepareScene::initBack()
 //{
 //    Vector<MenuItem*> MenuItems_fight;
-//    //»ØÍË
+//    //å›é€€
 //    auto backItem = MenuItemImage::create(
 //        "smallbacknormal.png",
 //        "smallbackselected.png",
@@ -101,8 +101,8 @@ void draw() {
 //    if (!(backItem == nullptr ||
 //        backItem->getContentSize().width <= 0 ||
 //        backItem->getContentSize().height <= 0))
-//    {//ÍË³ö²Ëµ¥ÏîÓĞĞ§£¬½ÓÏÂÀ´»á¼ÆËãÍË³ö²Ëµ¥ÏîµÄÎ»ÖÃ
-//        // »ñÈ¡³¡¾°µÄ³ß´çºÍÖĞĞÄ×ø±ê
+//    {//é€€å‡ºèœå•é¡¹æœ‰æ•ˆï¼Œæ¥ä¸‹æ¥ä¼šè®¡ç®—é€€å‡ºèœå•é¡¹çš„ä½ç½®
+//        // è·å–åœºæ™¯çš„å°ºå¯¸å’Œä¸­å¿ƒåæ ‡
 //        auto visibleSize = Director::getInstance()->getVisibleSize();
 //        Vec2 origin = Director::getInstance()->getVisibleOrigin();
 //        float x = origin.x + visibleSize.width * 17 / 18;
@@ -110,17 +110,17 @@ void draw() {
 //        backItem->setPosition(Vec2(x, y));
 //    }
 //    MenuItems_fight.pushBack(backItem);
-//    auto menu = Menu::createWithArray(MenuItems_fight);//´´½¨²Ëµ¥
-//    menu->setPosition(Vec2::ZERO);//½«²Ëµ¥µÄÎ»ÖÃÉèÖÃÎª(0, 0)£¬¼´×óÏÂ½Ç
-//    this->addChild(menu, 2);//½«²Ëµ¥Ìí¼Óµ½µ±Ç°µÄÍ¼²ãÖĞ£¬²ã¼¶²ÎÊıÎª1£¬±íÊ¾½«²Ëµ¥·ÅÖÃÔÚÍ¼²ãµÄ×îÉÏ·½
+//    auto menu = Menu::createWithArray(MenuItems_fight);//åˆ›å»ºèœå•
+//    menu->setPosition(Vec2::ZERO);//å°†èœå•çš„ä½ç½®è®¾ç½®ä¸º(0, 0)ï¼Œå³å·¦ä¸‹è§’
+//    this->addChild(menu, 2);//å°†èœå•æ·»åŠ åˆ°å½“å‰çš„å›¾å±‚ä¸­ï¼Œå±‚çº§å‚æ•°ä¸º1ï¼Œè¡¨ç¤ºå°†èœå•æ”¾ç½®åœ¨å›¾å±‚çš„æœ€ä¸Šæ–¹
 //}
 
 //void PrepareScene::initPlayer()
 //{
 //    myPlayer = PlayerManager::getInstance()->getPlayer(0);
 //    enemyPlayer = PlayerManager::getInstance()->getPlayer(1);
-//    enemyPlayer->ai();//ÈË»ú¶ÔÕ½£¬¶ÔÊÖÊÇai¹¦ÄÜ
-//    myPlayer->myStore->money += myPlayer->myStore->interest + INIT_ADD_FOR_TURN;//Íæ¼Ò½ğÇ®
+//    enemyPlayer->ai();//äººæœºå¯¹æˆ˜ï¼Œå¯¹æ‰‹æ˜¯aiåŠŸèƒ½
+//    myPlayer->myStore->money += myPlayer->myStore->interest + INIT_ADD_FOR_TURN;//ç©å®¶é‡‘é’±
 //    if (myPlayer->myStore->level < 5)
 //    {
 //        myPlayer->myStore->exp += 2;
@@ -177,12 +177,12 @@ void draw() {
 //
 //void PrepareScene::initPrepareLabel()
 //{
-//    // ³õÊ¼»¯Ïß¶Î
+//    // åˆå§‹åŒ–çº¿æ®µ
 //    countdownLine = DrawNode::create();
 //    countdownLine->setAnchorPoint(Vec2(0, 0.5));
 //    countdownLine->setPosition(Vec2(0, 100));
 //    this->addChild(countdownLine);
-//    // ³õÊ¼»¯Label
+//    // åˆå§‹åŒ–Label
 //    countdownLabel = Label::createWithTTF("10", "fonts/arial.ttf", 50);
 //    countdownLabel->setPosition(Vec2(270, 700));
 //    this->addChild(countdownLabel);
@@ -198,7 +198,7 @@ void PrepareScene::putChessOnGrids()
         gridMap->nodeMap.at(a.first)->chessInGrid = a.second;
         gridMap->addChessToGrid(a.second, gridMap->getCellAtPosition(a.first));
         this->addChild(a.second, 2);
-        a.second->setOpacity(255);//²»Í¸Ã÷
+        a.second->setOpacity(255);//ä¸é€æ˜
     }
 }
 void PrepareScene::putChessOnSeats()
@@ -230,29 +230,29 @@ void PrepareScene::prepareSceneOnMouseDown(Event* event)
     // refactored with observer pattern
     //EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
 
-    //// ´¦ÀíÊó±ê×ó¼ü°´ÏÂÊÂ¼ş
+    //// å¤„ç†é¼ æ ‡å·¦é”®æŒ‰ä¸‹äº‹ä»¶
     //if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
 
     //    CCLOG("PrepareScene:Left mouse button clicked.");
     //    Vec2 mousePosition = mouseEvent->getLocationInView();
 
-    //    /*´Ë²¿·ÖÎª¶ÔÍÏ×§Æå×ÓµÄÅĞ¶Ï*/
+    //    /*æ­¤éƒ¨åˆ†ä¸ºå¯¹æ‹–æ‹½æ£‹å­çš„åˆ¤æ–­*/
     //    chessOnMouseDown(mousePosition);
 
-    //    /*´Ë²¿·ÖÎª¶Ôµã»÷¿¨ÅÆµÄÅĞ¶Ï*/
-    //    store->selectStore(event, mousePosition, preSeats->isFull());//store¼àÌıº¯Êı
-    //    if (store->chessIdHaveBought != -1)//³É¹¦¹ºÂò
+    //    /*æ­¤éƒ¨åˆ†ä¸ºå¯¹ç‚¹å‡»å¡ç‰Œçš„åˆ¤æ–­*/
+    //    store->selectStore(event, mousePosition, preSeats->isFull());//storeç›‘å¬å‡½æ•°
+    //    if (store->chessIdHaveBought != -1)//æˆåŠŸè´­ä¹°
     //    {
-    //        Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);//Éú³ÉÆå×ÓÊµÀı
+    //        Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);//ç”Ÿæˆæ£‹å­å®ä¾‹
     //        chess->maxHP = chess->health;
-    //        if (chess)//Æå×Ó´æÔÚ
+    //        if (chess)//æ£‹å­å­˜åœ¨
     //        {
-    //            preSeats->addChessToSeat(chess, preSeats->latestSeat);//·ÅÖÃ±¸Õ½Ï¯
-    //            myPlayer->addChess(chess);//¼ÓÈëÍæ¼Ò¶ÓÎé
+    //            preSeats->addChessToSeat(chess, preSeats->latestSeat);//æ”¾ç½®å¤‡æˆ˜å¸­
+    //            myPlayer->addChess(chess);//åŠ å…¥ç©å®¶é˜Ÿä¼
     //            this->addChild(chess, 1);
-    //            checkAndMerge(chess);//¼ì²éĞÂÔöµÄÕâ¸öÊÇ·ñÄÜºÏ³É
+    //            checkAndMerge(chess);//æ£€æŸ¥æ–°å¢çš„è¿™ä¸ªæ˜¯å¦èƒ½åˆæˆ
     //        }
-    //        store->chessIdHaveBought = -1;//ÖØÖÃ
+    //        store->chessIdHaveBought = -1;//é‡ç½®
     //    }
     //}
     EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -260,6 +260,7 @@ void PrepareScene::prepareSceneOnMouseDown(Event* event)
         Vec2 mousePosition = mouseEvent->getLocationInView();
         // notifier
         this->notifyObservers(EventType::MouseDown, mousePosition);
+
     }
 }
 // refactored with observer pattern
@@ -267,15 +268,15 @@ void PrepareScene::prepareSceneOnMouseMove(Event* event)
 {
     // refactored with observer pattern
     ////CCLOG("MousMove");
-    //// »ñÈ¡Êó±êÊÂ¼ş
+    //// è·å–é¼ æ ‡äº‹ä»¶
     //EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
 
-    //// »ñÈ¡Êó±êÎ»ÖÃ
+    //// è·å–é¼ æ ‡ä½ç½®
     //Vec2 mousePosition = mouseEvent->getLocationInView();
 
     //Vec2 location = Director::getInstance()->convertToGL(mousePosition);
 
-    ///*´Ë²¿·ÖÎª¶ÔÍÏ×§Æå×ÓµÄÅĞ¶Ï*/
+    ///*æ­¤éƒ¨åˆ†ä¸ºå¯¹æ‹–æ‹½æ£‹å­çš„åˆ¤æ–­*/
     //chessOnMouseMove(mousePosition);
     //return;
     EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -287,13 +288,13 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 {
     // refactored with observer pattern
     //CCLOG("MouseUp");
-    //// »ñÈ¡Êó±êÊÂ¼ş
+    //// è·å–é¼ æ ‡äº‹ä»¶
     //EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
 
-    //// »ñÈ¡Êó±êÎ»ÖÃ
+    //// è·å–é¼ æ ‡ä½ç½®
     //Vec2 mousePosition = mouseEvent->getLocationInView();
 
-    ///*´Ë²¿·ÖÎª¶ÔÍÏ×§Æå×ÓµÄÅĞ¶Ï*/
+    ///*æ­¤éƒ¨åˆ†ä¸ºå¯¹æ‹–æ‹½æ£‹å­çš„åˆ¤æ–­*/
     //chessOnMouseUp(mousePosition);
     //return;
     EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -303,64 +304,64 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 
 // refactored with observer pattern 
 // all of the judgement code are placed in cooresponding class
-////Êó±ê°´ÏÂ
+////é¼ æ ‡æŒ‰ä¸‹
 //void PrepareScene::chessOnMouseDown(Vec2 mousePosition)
 //{
 //
-//    //ÊµÏÖÅĞ¶Ïµ¥»÷Ê±ÊÇ·ñÓĞÆå¸ñ»ò±¸Õ½Ï¯
+//    //å®ç°åˆ¤æ–­å•å‡»æ—¶æ˜¯å¦æœ‰æ£‹æ ¼æˆ–å¤‡æˆ˜å¸­
 //    HexCell* cell = gridMap->mouseInWhichCell(mousePosition);
 //    Seat* seat = preSeats->mouseInWhichSeat(mousePosition);
-//    //Èç¹ûÆå¸ñ´æÔÚÇÒÓĞÆå×Ó
+//    //å¦‚æœæ£‹æ ¼å­˜åœ¨ä¸”æœ‰æ£‹å­
 //    if (cell && cell->chessInGrid)
 //    {
 //        selectedChess = cell->chessInGrid;
 //        selectedChess->isDragging = true;
 //
-//        gridMap->removeChessOfGrid(cell);//´ÓÆå¸ñÉÏÒÆ³ı
+//        gridMap->removeChessOfGrid(cell);//ä»æ£‹æ ¼ä¸Šç§»é™¤
 //        myPlayer->removeChess(selectedChess);
 //    }
-//    //ÓĞ±¸Õ½Ï¯£¬ÇÒÏ¯Î»ÉÏ´æÔÚÆå×Ó
+//    //æœ‰å¤‡æˆ˜å¸­ï¼Œä¸”å¸­ä½ä¸Šå­˜åœ¨æ£‹å­
 //    if (seat && seat->chessInSeat)
 //    {
 //        selectedChess = seat->chessInSeat;
 //        selectedChess->isDragging = true;
 //
-//        preSeats->removeChessOfSeat(seat);//ÒÆ³ı
+//        preSeats->removeChessOfSeat(seat);//ç§»é™¤
 //        myPlayer->removeChess(selectedChess);
 //
 //    }
 //}
 //
-////Êó±êÒÆ¶¯
+////é¼ æ ‡ç§»åŠ¨
 //void PrepareScene::chessOnMouseMove(Vec2 mousePosition)
 //{
-//    if (selectedChess)//ÓĞÑ¡ÖĞÆå×Ó
-//        if (selectedChess->isDragging)//Æå×ÓÕıÔÚ±»ÍÏ¶¯
+//    if (selectedChess)//æœ‰é€‰ä¸­æ£‹å­
+//        if (selectedChess->isDragging)//æ£‹å­æ­£åœ¨è¢«æ‹–åŠ¨
 //        {
-//            //ÎÒ·½ÆåÅÌ¸ßÁÁ
+//            //æˆ‘æ–¹æ£‹ç›˜é«˜äº®
 //            for (auto iter : gridMap->nodeMap)
 //            {
 //                if (iter.second->isMine)
 //                    iter.second->turnToSeen();
 //            }
-//            //Æå×Ó¸úËæÊó±êÎ»ÖÃ
+//            //æ£‹å­è·Ÿéšé¼ æ ‡ä½ç½®
 //            selectedChess->setPosition(mousePosition);
 //        }
 //}
 //
-////Êó±êÌ§Æğ
+////é¼ æ ‡æŠ¬èµ·
 //void PrepareScene::chessOnMouseUp(Vec2 mousePosition)
 //{
 //    HexCell* cell = gridMap->mouseInWhichCell(mousePosition);
 //    Seat* seat = preSeats->mouseInWhichSeat(mousePosition);
-//    //ÈôÓĞÒÑ¾­ÔÚ±»ÍÏ¶¯µÄÆå×Ó
+//    //è‹¥æœ‰å·²ç»åœ¨è¢«æ‹–åŠ¨çš„æ£‹å­
 //    if (selectedChess && selectedChess->isDragging)
 //    {
 //        selectedChess->isDragging = false;
 //
 //
-//        //´Ë´¦ÅĞ¶ÏÊó±êÎ»ÖÃËù´¦Æå¸ñÊÇ·ñ´æÔÚ
-//        //1 ÓĞĞ§µ«³¬³öÈË¿Ú·¶Î§
+//        //æ­¤å¤„åˆ¤æ–­é¼ æ ‡ä½ç½®æ‰€å¤„æ£‹æ ¼æ˜¯å¦å­˜åœ¨
+//        //1 æœ‰æ•ˆä½†è¶…å‡ºäººå£èŒƒå›´
 //        if (gridMap->chessAmount >= myPlayer->myStore->level && cell && !cell->chessInGrid) {
 //            createText("Level Is Not Enough");
 //            CCLOG("PrepareScene:swap failed");
@@ -368,7 +369,7 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //            preSeats->addChessToSeat(selectedChess, preSeats->getSeatAtPosition(selectedChess->atSeatPosition));
 //            myPlayer->addChess(selectedChess);
 //        }
-//        //2 Æå¸ñ´æÔÚÇÒÎ»ÖÃÉÏÎŞÆå×Ó,½«Æå×Ó·ÅÖÃÔÚĞÂµÄÎ»ÖÃÉÏ
+//        //2 æ£‹æ ¼å­˜åœ¨ä¸”ä½ç½®ä¸Šæ— æ£‹å­,å°†æ£‹å­æ”¾ç½®åœ¨æ–°çš„ä½ç½®ä¸Š
 //        else if (cell && !cell->chessInGrid && cell->isMine)
 //        {
 //            CCLOG("PrepareScene:put Chess on Grid");
@@ -381,22 +382,22 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //            preSeats->addChessToSeat(selectedChess, seat);
 //            myPlayer->addChess(selectedChess);
 //        }
-//        //3 Æå¸ñ´æÔÚÇÒÎ»ÖÃÉÏÓĞÆå×Ó
+//        //3 æ£‹æ ¼å­˜åœ¨ä¸”ä½ç½®ä¸Šæœ‰æ£‹å­
 //        else if (cell && cell->chessInGrid && cell->isMine)
 //        {
 //            CCLOG("PrepareScene:swap Cell and Something");
 //
 //            Chess* moveChess = cell->chessInGrid;
-//            //½«¸ÃÎ»ÖÃÉÏµÄÆå×ÓÇå³ı
+//            //å°†è¯¥ä½ç½®ä¸Šçš„æ£‹å­æ¸…é™¤
 //            myPlayer->removeChess(moveChess);
 //            gridMap->removeChessOfGrid(cell);
 //
-//            //½«¸ÃÎ»ÖÃ´¦µÄÆå×ÓÌí¼Óµ½selectedChessµÄÎ»ÖÃ
+//            //å°†è¯¥ä½ç½®å¤„çš„æ£‹å­æ·»åŠ åˆ°selectedChessçš„ä½ç½®
 //            gridMap->addChessToGrid(moveChess, gridMap->getCellAtPosition(selectedChess->atGridPosition));
 //            preSeats->addChessToSeat(moveChess, preSeats->getSeatAtPosition(selectedChess->atSeatPosition));
 //            myPlayer->addChess(moveChess);
 //
-//            //½«selectedChessÌí¼Óµ½Õâ¸öÎ»ÖÃÉÏ
+//            //å°†selectedChessæ·»åŠ åˆ°è¿™ä¸ªä½ç½®ä¸Š
 //            gridMap->addChessToGrid(selectedChess, cell);
 //            myPlayer->addChess(selectedChess);
 //        }
@@ -404,20 +405,20 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //        {
 //            CCLOG("PrepareScene:swap Seat and Something");
 //            Chess* moveChess = seat->chessInSeat;
-//            //½«¸ÃÎ»ÖÃÉÏµÄÆå×ÓÇå³ı
+//            //å°†è¯¥ä½ç½®ä¸Šçš„æ£‹å­æ¸…é™¤
 //            myPlayer->removeChess(seat->chessInSeat);
 //            preSeats->removeChessOfSeat(seat);
 //
-//            //½«¸ÃÎ»ÖÃ´¦µÄÆå×ÓÌí¼Óµ½selectedChessµÄÎ»ÖÃ
+//            //å°†è¯¥ä½ç½®å¤„çš„æ£‹å­æ·»åŠ åˆ°selectedChessçš„ä½ç½®
 //            gridMap->addChessToGrid(moveChess, gridMap->getCellAtPosition(selectedChess->atGridPosition));
 //            preSeats->addChessToSeat(moveChess, preSeats->getSeatAtPosition(selectedChess->atSeatPosition));
 //            myPlayer->addChess(moveChess);
 //
-//            //½«selectedChessÌí¼Óµ½Õâ¸öÎ»ÖÃÉÏ
+//            //å°†selectedChessæ·»åŠ åˆ°è¿™ä¸ªä½ç½®ä¸Š
 //            preSeats->addChessToSeat(selectedChess, seat);
 //            myPlayer->addChess(selectedChess);
 //        }
-//        //4 ²»´æÔÚÆå¸ñ£¬µ«Î»ÓÚÉÌµê
+//        //4 ä¸å­˜åœ¨æ£‹æ ¼ï¼Œä½†ä½äºå•†åº—
 //        else if (mousePosition.y <= store->storeAreaHeight)
 //        {
 //            CCLOG("PrepareScene: chess to be sold");
@@ -425,10 +426,10 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //            selectedChess->deleteChess();
 //
 //        }
-//        //ÈÃÆå¸ñÍË»ØÔ­À´Î»ÖÃ
+//        //è®©æ£‹æ ¼é€€å›åŸæ¥ä½ç½®
 //        else
 //        {
-//            if (cell && !cell->chessInGrid && !cell->isMine)//ÔÚµĞ·½ÆåÅÌ·ÅÖÃ
+//            if (cell && !cell->chessInGrid && !cell->isMine)//åœ¨æ•Œæ–¹æ£‹ç›˜æ”¾ç½®
 //                createText("Cannot Put on the Opponent's Board");
 //            CCLOG("PrepareScene:swap failed");
 //            gridMap->addChessToGrid(selectedChess, gridMap->getCellAtPosition(selectedChess->atGridPosition));
@@ -450,7 +451,7 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //{
 //    if (myPlayer->chessCount[std::make_pair(chess->getId(), chess->getStar())] >= 3)
 //    {
-//        //´Ë´¦ĞèÒª×¢ÒâÓĞÁ¬Ğø½ø»¯µÄ¿ÉÄÜ£¬ÓÃµİ¹éĞÎÊ½ÈİÒ×Àí½â
+//        //æ­¤å¤„éœ€è¦æ³¨æ„æœ‰è¿ç»­è¿›åŒ–çš„å¯èƒ½ï¼Œç”¨é€’å½’å½¢å¼å®¹æ˜“ç†è§£
 //        checkAndMerge(upgradeChess(chess->getId(), chess->getStar()));
 //    }
 //    else
@@ -459,35 +460,35 @@ void PrepareScene::prepareSceneOnMouseUp(Event* event)
 //    }
 //}
 
-//½ø»¯Ô­À´ÊÇidºÍstarµÄÆå×Ó
-//Æå×ÓÈıºÏÒ»½ø»¯£¬ÔÚµÚÒ»¸öÆå×ÓµÄ»ù´¡ÉÏ½ø»¯£¬É¾³ıÊ£ÏÂÁ½¸öÆå×Ó
-//Æå×Ó¿ÉÄÜ³öÏÖÔÚ±¸Õ½Ï¯ºÍÆåÅÌÉÏ
+//è¿›åŒ–åŸæ¥æ˜¯idå’Œstarçš„æ£‹å­
+//æ£‹å­ä¸‰åˆä¸€è¿›åŒ–ï¼Œåœ¨ç¬¬ä¸€ä¸ªæ£‹å­çš„åŸºç¡€ä¸Šè¿›åŒ–ï¼Œåˆ é™¤å‰©ä¸‹ä¸¤ä¸ªæ£‹å­
+//æ£‹å­å¯èƒ½å‡ºç°åœ¨å¤‡æˆ˜å¸­å’Œæ£‹ç›˜ä¸Š
 Chess* PrepareScene::upgradeChess(int id, int star)
 {
-    //upgradeChessÓÃÓÚ±£´æµÚÒ»¸ö¼ì²âµ½µÄÆå×Ó£¬½«»ùÓÚËû½ø»¯
+    //upgradeChessç”¨äºä¿å­˜ç¬¬ä¸€ä¸ªæ£€æµ‹åˆ°çš„æ£‹å­ï¼Œå°†åŸºäºä»–è¿›åŒ–
     Chess* upgradeChess = nullptr;
 
-    //Öğ¸ö¼ì²é±¸Õ½Ï¯ÉÏµÄÆå×Ó
+    //é€ä¸ªæ£€æŸ¥å¤‡æˆ˜å¸­ä¸Šçš„æ£‹å­
     for (int i = 0; i < SEATS_NUM; i++)
     {
         if (preSeats->mySeats[i]->getId() == id && preSeats->mySeats[i]->getStar() == star)
         {
-            auto chessRemove = preSeats->mySeats[i];//Ö¸ÏòÒªÉ¾³ıµÄÆå×Ó
-            //±£ÁôµÚÒ»¸öÆå×Ó
+            auto chessRemove = preSeats->mySeats[i];//æŒ‡å‘è¦åˆ é™¤çš„æ£‹å­
+            //ä¿ç•™ç¬¬ä¸€ä¸ªæ£‹å­
             if (upgradeChess == nullptr) {
                 upgradeChess = chessRemove;
-                myPlayer->removeChess(chessRemove);//´ÓÍæ¼ÒÆå×ÓÖĞÉ¾³ıÔ­ĞÇ¼¶µÄÆå×Ó
+                myPlayer->removeChess(chessRemove);//ä»ç©å®¶æ£‹å­ä¸­åˆ é™¤åŸæ˜Ÿçº§çš„æ£‹å­
             }
             else {
-                myPlayer->removeChess(chessRemove);//´ÓÍæ¼ÒÆå×ÓÖĞÉ¾³ıÔ­ĞÇ¼¶µÄÆå×Ó
-                preSeats->removeChessOfSeat(preSeats->getSeatAtPosition(chessRemove->atSeatPosition));//É¾³ıÔ­ĞÇ¼¶µÄÆå×ÓµÄÏ¯Î»
-                chessRemove->deleteChess();//°ÑÆå×ÓÉ¾³ı
+                myPlayer->removeChess(chessRemove);//ä»ç©å®¶æ£‹å­ä¸­åˆ é™¤åŸæ˜Ÿçº§çš„æ£‹å­
+                preSeats->removeChessOfSeat(preSeats->getSeatAtPosition(chessRemove->atSeatPosition));//åˆ é™¤åŸæ˜Ÿçº§çš„æ£‹å­çš„å¸­ä½
+                chessRemove->deleteChess();//æŠŠæ£‹å­åˆ é™¤
             }
         }
     }
 
-    //Öğ¸ö¼ì²éÆåÅÌÉÏµÄÆå×Ó
-    //±£´æÆåÅÌÉÏËùÓĞÕâ¸öidºÍstarµÄÆå×Ó
+    //é€ä¸ªæ£€æŸ¥æ£‹ç›˜ä¸Šçš„æ£‹å­
+    //ä¿å­˜æ£‹ç›˜ä¸Šæ‰€æœ‰è¿™ä¸ªidå’Œstarçš„æ£‹å­
     std::vector<Vec2> keysToRemove;
     for (auto pair : myPlayer->myChessMap)
     {
@@ -496,7 +497,7 @@ Chess* PrepareScene::upgradeChess(int id, int star)
             keysToRemove.push_back(pair.first);
         }
     }
-    //ÔÙÒÀ´Î´¦ÀíÍ¬ÉÏ
+    //å†ä¾æ¬¡å¤„ç†åŒä¸Š
     for (const auto& key : keysToRemove)
     {
         auto chessRemove = myPlayer->myChessMap[key];
@@ -510,7 +511,7 @@ Chess* PrepareScene::upgradeChess(int id, int star)
             chessRemove->deleteChess();
         }
     }
-    //¸ù¾İstar£¬¾ö¶¨ÊÇ½ø»¯³Éstar2»¹ÊÇstar3
+    //æ ¹æ®starï¼Œå†³å®šæ˜¯è¿›åŒ–æˆstar2è¿˜æ˜¯star3
     cocos2d::experimental::AudioEngine::play2d("upgradeEffect.mp3", false);
     upgradeChess->upgrade();
     myPlayer->addChess(upgradeChess);
@@ -519,50 +520,50 @@ Chess* PrepareScene::upgradeChess(int id, int star)
 
 void PrepareScene::goToFightScene(float dt)
 {
-    // ´´½¨ĞÂµÄ³¡¾°
+    // åˆ›å»ºæ–°çš„åœºæ™¯
     auto fightScene = FightScene::create();
-    //ÇĞ»»ÒôÀÖ
+    //åˆ‡æ¢éŸ³ä¹
     experimental::AudioEngine::stop(globalAudioId);
     globalAudioId = cocos2d::experimental::AudioEngine::play2d("battleMusic.mp3", true);
     experimental::AudioEngine::setVolume(globalAudioId, UserDefault::getInstance()->getFloatForKey("backGroundMusicVolumn", 50) / 100.0f);
 
-    // ÇĞ»»µ½ĞÂ³¡¾°
+    // åˆ‡æ¢åˆ°æ–°åœºæ™¯
     cocos2d::Director::getInstance()->replaceScene(fightScene);
 }
 
 void PrepareScene::menuPlayCallback(Ref* pSender) {
     if (isAudioEnabled)
-    {// ÆôÓÃÒôĞ§
+    {// å¯ç”¨éŸ³æ•ˆ
         playSoundEffect("myEffect.mp3");
     }
-    //°ÑÔ­Êı¾İÉ¾³ıÔÙÀë¿ª³¡¾°
+    //æŠŠåŸæ•°æ®åˆ é™¤å†ç¦»å¼€åœºæ™¯
     PlayerManager::getInstance()->getPlayer(0)->deletePast();
     PlayerManager::getInstance()->getPlayer(1)->deletePast();
 
-    Director::getInstance()->popScene(); // ÇĞ»»µ½playscene³¡¾°
+    Director::getInstance()->popScene(); // åˆ‡æ¢åˆ°playsceneåœºæ™¯
 }
 
 void updateCountdownLabel(float dt) {
-    remainingTime -= dt;  // Ã¿Ö¡¼õÉÙµ¹¼ÆÊ±
+    remainingTime -= dt;  // æ¯å¸§å‡å°‘å€’è®¡æ—¶
     if (remainingTime <= 0) {
         remainingTime = 0;
     }
 
-    this->notifyObservers();  // Í¨ÖªËùÓĞ¹Û²ìÕß
+    this->notifyObservers();  // é€šçŸ¥æ‰€æœ‰è§‚å¯Ÿè€…
 }
 
-// Ã¿Ö¡¸üĞÂ
+// æ¯å¸§æ›´æ–°
 void update(float dt) override {
-    // ½øĞĞµ¹¼ÆÊ±¸üĞÂ
+    // è¿›è¡Œå€’è®¡æ—¶æ›´æ–°
     updateCountdownLabel(dt);
 
-    // ¸üĞÂ³¡¾°ÖĞËùÓĞ×é¼ş
+    // æ›´æ–°åœºæ™¯ä¸­æ‰€æœ‰ç»„ä»¶
     for (auto component : *sceneComponents) {
         component->update(dt);
     }
     this.goToFightScene(dt);
 }
-//Êä³öËæÊäÈë¸Ä±äµÄÌáÊ¾£¬²¢ÔÚÒ»¶ÎÊ±¼äºó×Ô¶¯ÒÆ³ı
+//è¾“å‡ºéšè¾“å…¥æ”¹å˜çš„æç¤ºï¼Œå¹¶åœ¨ä¸€æ®µæ—¶é—´åè‡ªåŠ¨ç§»é™¤
 void PrepareScene::createText(const std::string& textContent)
 {
     unschedule(CC_SCHEDULE_SELECTOR(PrepareScene::updateText));
@@ -581,7 +582,7 @@ void PrepareScene::createText(const std::string& textContent)
 
 }
 
-//createTextµÄµ÷¶ÈÆ÷ÓÃ£¬Ê¹ÌáÊ¾Öğ½¥µ­³ö
+//createTextçš„è°ƒåº¦å™¨ç”¨ï¼Œä½¿æç¤ºé€æ¸æ·¡å‡º
 void PrepareScene::updateText(float dt)
 {
     elapsedTime += dt;
@@ -590,7 +591,7 @@ void PrepareScene::updateText(float dt)
 
     fadingText->setOpacity(opacity);
 
-    //ÍêÈ«Í¸Ã÷ºóÍ£Ö¹µ÷¶ÈÆ÷
+    //å®Œå…¨é€æ˜ååœæ­¢è°ƒåº¦å™¨
     if (opacity <= 0) {
         unschedule(CC_SCHEDULE_SELECTOR(PrepareScene::updateText));
         fadingText->removeFromParentAndCleanup(true);
