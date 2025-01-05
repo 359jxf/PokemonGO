@@ -359,3 +359,39 @@ void Store::updateText(float dt)
     }
 }
 
+void Store::update(EventType event, Vec2 position) override {
+    switch (event) {
+    case EventType::MouseDown:
+        // 处理鼠标点击商店的逻辑
+        handleMouseDown(position);
+        break;
+    case EventType::MouseMove:
+        // 处理鼠标移动到商店区域的逻辑
+        break;
+    case EventType::MouseUp:
+        // 处理鼠标放开时的逻辑
+        handleMouseUp(position);
+        break;
+    default:
+        break;
+    }
+}
+
+void Store::handleMouseDown(Vec2 position) {
+    this->selectStore(event, mousePosition, preSeats->isFull());//store监听函数
+    if (store->chessIdHaveBought != -1)//成功购买
+    {
+        Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);//生成棋子实例
+        chess->maxHP = chess->health;
+        if (chess)//棋子存在
+        {
+            preSeats->addChessToSeat(chess, preSeats->latestSeat);//放置备战席
+            myPlayer->addChess(chess);//加入玩家队伍
+            this->addChild(chess, 1);
+            checkAndMerge(chess);//检查新增的这个是否能合成
+        }
+        store->chessIdHaveBought = -1;//重置
+    }
+}
+
+

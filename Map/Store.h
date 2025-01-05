@@ -2,7 +2,8 @@
 
 #include "cocos2d.h"
 #include "StoreLayer.h"
-
+#include "../Refactor/Component.cpp"
+#include "IObserver.h"
 #define MAX_LEVEL 5                // 最大等级
 #define MAX_INTEREST 5              // 回合结算的最大利润
 #define MONEY_FOR_REFRESH 2         // 每次刷新所需金币
@@ -23,7 +24,7 @@ const int cardPercent[MAX_LEVEL][4] = { {50, 100, 0, 0}, {25, 85, 100, 0}, {10, 
 const int levelExp[4] = { 4, 8, 14, 20 };
 
 /* 个人玩家商店信息 */
-class StoreAttribute : public cocos2d::Node {
+class StoreAttribute : public cocos2d::Node, public Component {
 public:
     int money;//当前的钱
     int level;//等级
@@ -36,7 +37,7 @@ public:
 };
 
 /* 商店管理 */
-class Store : public cocos2d::Node {
+class Store : public cocos2d::Node,public IObserver {
 public:
     int storeAreaHeight = STORE_HEIGHT;
 
@@ -95,4 +96,7 @@ public:
 
     // 判断点击事件并执行
     void selectStore(Event* event, Vec2 mousePosition, bool isFull);
+
+    // refactored with Observer pattern
+    virtual void update(EventType* event, Vec2 position);
 };

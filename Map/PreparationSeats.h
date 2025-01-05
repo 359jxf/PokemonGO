@@ -2,8 +2,10 @@
 #ifndef PREPARATIONSEATS_H
 #define PREPARATIONSEATS_H
 #include "cocos2d.h"
-#include "Chess.h"
-#include "Seat.h"
+#include "./Chess/Chess.h"
+#include "./Map/Seat.h"
+#include "Component.h"
+#include "CompositeComponent.h"
 USING_NS_CC;
 
 #define SEATS_NUM 8
@@ -14,14 +16,14 @@ const float seatGap = 13.0f;//备战席间距
 
 #define TEST 0//改成1，可通过左键单击变化备战席格状态
 
-class PreparationSeats : public cocos2d::Node {
+class PreparationSeats : public cocos2d::Node, public CompositeComponent {
 public:
 	Chess** mySeats;//我方备战席上的棋子
 
 	int seatsNum=0;//备战席的被填满的棋格数量
 
-	Vector<Seat*> seatsArray;//8个备战席位
-	
+	// Vector<Seat*> seatsArray;//8个备战席位
+	Vector<Component*> seatsArray;
 	Seat* latestSeat;//最左侧的空位位置
 public:
 	//根据棋手信息更新显示
@@ -51,7 +53,12 @@ public:
 
 	//获得指定位置的Seat*
 	Seat* getSeatAtPosition(int position);
-
+	
+	void addSeat(Seat* seat);
+	virtual void init() override;
+	virtual void update() override;
+	virtual void draw() override;
+	virtual ~PreparationSeatsComponent();
 };
 
 

@@ -2,10 +2,11 @@
 #define HEXCELL_H
 
 #include "cocos2d.h"
-#include "Chess.h"
+#include "./Chess/Chess.h"
+#include "Component.h"
 USING_NS_CC;
 
-class HexCell : public cocos2d::Node {
+class HexCell : public cocos2d::Node,public Component {
 public:
     Sprite* hexSprite;
 
@@ -49,7 +50,7 @@ public:
 
     static HexCell* create();
     //单个棋格的初始化
-    virtual bool init() override;
+    virtual void init() override;
 
     void turnToSelected();//选中
 
@@ -61,7 +62,8 @@ public:
     //棋子是否可以通行棋格
     bool CanPass(Chess* InActor) const;
 
-
+    virtual void update() override;
+    virtual void draw() override;
 
 };
 

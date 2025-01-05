@@ -168,3 +168,34 @@ Seat* PreparationSeats::getSeatAtPosition(int position)
     return nullptr;
 }
 
+void PreparationSeats::addSeat(Seat* seat) {
+    seatsArray.pushBack(seat);
+    // 将 seat 作为子组件加入 CompositeComponent 管理
+    this->addChild(seat);
+}
+
+void PreparationSeats::init() {
+    for (int i = 0; i < SEATS_NUM; i++) {
+        Seat* seat = new Seat(i);
+        seat->init();
+        addSeat(seat);
+    }
+}
+
+void PreparationSeats::update() {
+    for (auto& seat : seatsArray) {
+        seat->update();
+    }
+}
+
+void PreparationSeats::draw() {
+    for (auto& seat : seatsArray) {
+        seat->draw();
+    }
+}
+
+PreparationSeats::~PreparationSeats() {
+    for (auto& seat : seatsArray) {
+        delete seat;
+    }
+}

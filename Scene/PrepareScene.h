@@ -13,11 +13,16 @@
 #include "Store.h"
 #include "LittleHero.h"
 #include "FightScene.h"
+#include "./Refactor/CompositeComponent.cpp"
+#include "CompositeComponent.h"
+#include "ISubject.h"
+#include "IObserver.h"
+#include "CountdownLabel.h"
 USING_NS_CC;
-class PrepareScene : public cocos2d::Scene
+class PrepareScene : public cocos2d::Scene,public ISubject
 {
 public:
-    Player* myPlayer;
+    /*Player* myPlayer;
     Player* enemyPlayer;
     Sprite* backgroundImg;
     GridMap* gridMap;
@@ -26,16 +31,27 @@ public:
     PreparationSeats* preSeats;
     Store* store;
     LittleHero* littleHero;
-    LittleHero* littleHeroEnemy;
-
+    LittleHero* littleHeroEnemy;*/ // refactoring with composite pattern
+    Vector<Component*> sceneComponents; // refactored with composite pattern
+    Vector<IObserver*> observers; // refactored with observer pattern
+    float remainingTime = 10.0f; // refactored with observer pattern
     // 倒计时相关
-    DrawNode* countdownLine;
+    /*DrawNode* countdownLine;
     Label* countdownLabel;
-    float remainingTime;
+    float remainingTime;*/ // refactored with Observer pattern
 public:
     
     float elapsedTime = 0.0f;
     Label* fadingText;
+    void  update(); // refactored with composite pattern
+    void draw();  // refactored with composite pattern
+
+    void addObserver(IObserver* observer) override;
+
+    void removeObserver(IObserver* observer) override;
+
+    void notifyObservers(EventType event,Vec2 position) override;
+
     //打印提示
     void createText(const std::string& textContent);
     void updateText(float dt);
@@ -45,7 +61,7 @@ public:
 
     // 初始化场景的方法
     virtual bool init();
-
+    virtual 
     //回退按钮
     void initBack();
 
@@ -107,6 +123,7 @@ public:
     
     //倒计时
     void updateCountdownLabel(float dt);
+
 };
 
 #endif // __PREPARE_SCENE_H__

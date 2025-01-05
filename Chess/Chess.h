@@ -5,6 +5,7 @@
 #include "HealthBar.h"
 #include "BlueBar.h"
 #include"AudioEngine.h"
+
 #include "Prototype.h"
 class GridMap;
 class HexCell;
@@ -15,83 +16,82 @@ class ChessState;
 
 USING_NS_CC;
 
-#define SET_SCALE 0.15//对棋子模型大小的缩放设置
-#define MAX_ID 8//最多卡牌数
-#define PRICE_STAR1_GRADE1 1//1星1阶卡的费用
-#define PRICE_STAR1_GRADE2 2//1星2阶卡的费用
-#define PRICE_STAR1_GRADE3 5//1星3阶卡的费用
+#define SET_SCALE 0.15//������ģ�ʹ�С����������
+#define MAX_ID 8//��࿨����
+#define PRICE_STAR1_GRADE1 1//1��1�׿��ķ���
+#define PRICE_STAR1_GRADE2 2//1��2�׿��ķ���
+#define PRICE_STAR1_GRADE3 5//1��3�׿��ķ���
 
-#define PRICE_STAR2_GRADE1 2//2星1阶卡的费用
-#define PRICE_STAR2_GRADE2 5//2星2阶卡的费用
-#define PRICE_STAR2_GRADE3 14//2星3阶卡的费用
+#define PRICE_STAR2_GRADE1 2//2��1�׿��ķ���
+#define PRICE_STAR2_GRADE2 5//2��2�׿��ķ���
+#define PRICE_STAR2_GRADE3 14//2��3�׿��ķ���
 
-#define PRICE_STAR3_GRADE1 3//3星1阶卡的费用
-#define PRICE_STAR3_GRADE2 8//3星2阶卡的费用
-#define PRICE_STAR3_GRADE3 23//3星3阶卡的费用
+#define PRICE_STAR3_GRADE1 3//3��1�׿��ķ���
+#define PRICE_STAR3_GRADE2 8//3��2�׿��ķ���
+#define PRICE_STAR3_GRADE3 23//3��3�׿��ķ���
 #define CHESS_ATK 10
 #define CHESS_HEALTH 100
 
 // Refactored with Decorator and Prototype Pattern 
 //class Chess :public cocos2d::Sprite
 class Chess : public cocos2d::Sprite, public IChess, public Prototype
+
 {
-private:
-	ChessState* currentState = nullptr; // Refactored with State Pattern
 
-public://此处放属性变量
+public://�˴������Ա���
 
-	Vec2 atGridPosition = Vec2(-1, -1);//该棋子所处的棋盘相对坐标,是一个与coordinateChess相对应的位置坐标,记得置为-1！
+	Vec2 atGridPosition = Vec2(-1, -1);//�����������������������,��һ����coordinateChess���Ӧ��λ������,�ǵ���Ϊ-1��
 
-	int atSeatPosition = -1;//该棋子所处的备战席相对坐标，与Seat.number相对应，记得置为-1！
+	int atSeatPosition = -1;//�����������ı�սϯ������꣬��Seat.number���Ӧ���ǵ���Ϊ-1��
 
-	bool isDragging = false;//被拖动的判断
+	bool isDragging = false;//���϶����ж�
 
-	std::string name;//名字
+	std::string name;//����
 
-	int id;//卡牌id
+	int id;//����id
 
-	int star;//卡牌星级
+	int star;//�����Ǽ�
 
-	int ATK = CHESS_ATK;//攻击力
+	int ATK = CHESS_ATK;//������
 
-	int growATK;//成长攻击属性
+	int growATK;//�ɳ���������
 
-	int growHP;//成长生命属性
+	int growHP;//�ɳ���������
 
-	float attackSpeed ;//攻击速度，范围为0-9
+	float attackSpeed ;//�����ٶȣ���ΧΪ0-9
 
-	float moveSpeed = 1.0;//移动速度
+	float moveSpeed = 1.0;//�ƶ��ٶ�
 
-	int health = CHESS_HEALTH;//生命值，初始化100
+	int health = CHESS_HEALTH;//����ֵ����ʼ��100
 
-	int maxHP;//生命上限
+	int maxHP;//��������
 
-	int blueBar;//大写的Bar是蓝条上限，小写的bar是当前蓝条值
+	int blueBar;//��д��Bar���������ޣ�Сд��bar�ǵ�ǰ����ֵ
 
-	int currentBlueBar = 0;//当前蓝条
+	int currentBlueBar = 0;//��ǰ����
 
-	bool enable_skill = false;//能否放技能
+	bool enable_skill = false;//�ܷ�ż���
 
-	int skillCount = 0;//使用技能次数
+	int skillCount = 0;//ʹ�ü��ܴ���
 
-	int attackRange;//攻击范围
+	int attackRange;//������Χ
 
-	int price;//出售价格
+	int price;//���ۼ۸�
 
-	int originalCost;//购买时的费用
+	int originalCost;//����ʱ�ķ���
 
-	bool isMelee;//1的时候表示近战，0的时候表示远程
+	bool isMelee;//1��ʱ���ʾ��ս��0��ʱ���ʾԶ��
 
-	int playerNumber;//棋子所属的玩家编号
+	int playerNumber;//������������ұ��
 
-	//enum State { Idle, Moving, Attacking, Dead };
+	enum State { Idle, Moving, Attacking, Dead };
 
-	//State currentState = Idle;//保存当前棋子状态
+	State currentState = Idle;//���浱ǰ����״̬
 
-	bool isAnimationPlaying = false;//是否正在播放动画
+	bool isAnimationPlaying = false;//�Ƿ����ڲ��Ŷ���
 
-	HealthBar* healthBar;//血条
-	BlueBar* bluebar;//蓝条
+	HealthBar* healthBar;//Ѫ��
+	BlueBar* bluebar;//����
 public:
 	// Refactored with Decorator Pattern
 	// IChess中函数的实现
@@ -121,6 +121,8 @@ public:
   
   // refractored with prototype pattern
 	Prototype* clone() const override {};
+
 };
+
 
 #endif // Chess.h
