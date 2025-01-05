@@ -41,6 +41,7 @@ void GridMap::enableMouseListener() {
 
 //创建棋格对象并添加到棋盘的对应位置
 bool GridMap::init(std::map<Vec2, Chess*, Vec2Compare>playerChessMap) {
+    myChessMap = PlayerManager.getInstance().getPlayer(0).myChessMap;
     if (!Node::init()) {
         throw std::runtime_error("GridMap initialization failed: Node initialization failed");
     }
@@ -422,4 +423,67 @@ HexCell* GridMap::getCellAtPosition(Vec2 position)
     if (position.x >= 0 && position.y >= 0)
         return nodeMap[position];
     return nullptr;
+}
+
+void GridMap::update() {
+    for (auto& cell : nodeMap) {
+        cell->update();
+    }
+}
+
+void PreparationSeats::draw() {
+    for (auto& cell : nodeMap) {
+        cell->draw();
+    }
+}
+
+PreparationSeats::~PreparationSeats() {
+    for (auto& cell : nodeMap) {
+        delete cell;
+    }
+}
+
+// refactored with observer pattern
+void GridMap::update(EventType event, Vec2 position) {
+    switch (event) {
+    case EventType::MouseDown:
+        handleMouseDown(position);
+        break;
+    case EventType::MouseMove:
+        handleMouseMove(position);
+        break;
+    case EventType::MouseUp:
+        handleMouseUp(position);
+        break;
+    default:
+        break;
+    }
+}
+
+void handleMouseDown(Vec2 position) {
+    HexCell* cell = mouseInWhichCell(position);
+
+    if (cell) {
+        // 判断该格子上是否有棋子
+        if (cell->chessInGrid) {
+            CCLOG("GridMap: MouseDown on Cell with Chess at position (%f, %f)", position.x, position.y);
+            // 将该棋子从棋盘上移除
+            Chess* chess = cell->chessInGrid;
+            chess->isDragging = true;
+            removeChessOfGrid(cell);
+            myPlayer->removeChess(chess);
+        }
+    }
+}
+void handleMouseUp(Vec2 position) {
+    HexCell* cell = mouseInWhichCell(position);
+
+    if (cell && !cell->chessInGrid && cell->isMine) {
+        // 将棋子放入有效格子
+        if (selectedChess) {
+            selectedChess->setPosition(cell->getPosition());
+            gridMap->addChessToGrid(selectedChess, cell);
+            CCLOG("GridMap: Chess placed on grid at cell (%f, %f)", position.x, position.y);
+        }
+    }
 }

@@ -21,7 +21,7 @@ HexCell* HexCell::create() {
 }
 
 
-bool HexCell::init() {
+void HexCell::init() {
     if (!Node::init()) {
         throw std::runtime_error("HexCell initialization failed: Node initialization failed");
     }
@@ -37,7 +37,7 @@ bool HexCell::init() {
     width = hexSprite->getContentSize().width * SCALE;
     height = hexSprite->getContentSize().height * SCALE;
     length = width / 2;
-    return true;
+    return ;
 }
 
 

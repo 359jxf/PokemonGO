@@ -3,7 +3,9 @@
 #define SEAT_H
 #include "cocos2d.h"
 #include"HexCell.h"
-#include"Chess.h"
+#include"./Chess/Chess.h"
+#include"IObserver.h"
+#include"EventType.h"
 USING_NS_CC;
 
 #define SEATS_NUM 8
@@ -12,7 +14,7 @@ USING_NS_CC;
 #define STARTY 180
 
 
-class Seat :public cocos2d::Node {
+class Seat :public cocos2d::Node,public Component,public IObserver {
 public:
 	Sprite* seatImage;//存放备战席棋格的图片
 
@@ -24,14 +26,20 @@ public:
 
 
 public:
+	Seat(int num)
 	static Seat* create();
-
-	virtual bool init() override;
 
 	void turnToSelected();//选中
 
 	void turnToNormal();
+	// refactored with composite pattern
+	virtual void init() override;
+	virtual void update() override;
+	virtual void draw() override;
+	virtual SeatComponent();
 
+	// refactored with observer pattern
+	virtual void update(EventType* event, Vec2 position);
 };
 
 #endif

@@ -3,10 +3,11 @@
 
 #include "cocos2d.h"
 #include "HexCell.h"
-#include "Chess.h"
+#include "./Chess/Chess.h"
 #include <algorithm>
 #include "map"
-
+#include "CompositeComponent.h"
+#include "IObserver.h"
 #define NUM_COLUMN 14//棋盘列数
 #define NUM_LINE 8//行数
 
@@ -17,8 +18,8 @@ public:
         return (v1.x < v2.x) || (v1.x == v2.x && v1.y < v2.y);
     }
 };
-
-class GridMap : public cocos2d::Node {
+// refactoring with composite pattern
+class GridMap : public cocos2d::Node, public CompositeComponent, public IObserver {
 private:
     HexCell* lastCell = nullptr;//上一个选中的棋格
 public:
@@ -30,6 +31,7 @@ public:
 
     std::map<Vec2, Chess*, Vec2Compare>myChessMap;
 public:
+
     //根据棋手信息更新显示
     void updateForPlayer();
     // 启动或停止 schedule
@@ -39,7 +41,7 @@ public:
     static GridMap* create(std::map<Vec2, Chess*, Vec2Compare>myChessMap);
 
     //初始化棋格，行数列数
-    virtual bool init(std::map<Vec2, Chess*, Vec2Compare>myChessMap);
+    virtual bool init();
 
     //是否在棋盘范围
     bool isInBoard(Vec2 coor)const;
@@ -71,6 +73,10 @@ public:
 
     //传入一个Vec2值，返回对应的HexCell*
     HexCell* getCellAtPosition(Vec2 position);
+    
+    // refactored with observer pattern
+    virtual void update(EventType* event, Vec2 position);
+
 };
 
 #endif // HEXGRID_H
