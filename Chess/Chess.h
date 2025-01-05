@@ -5,10 +5,12 @@
 #include "HealthBar.h"
 #include "BlueBar.h"
 #include"AudioEngine.h"
+#include "Prototype.h"
 class GridMap;
 class HexCell;
 class Seat;
-class ChessFactory;
+// class ChessFactory;
+class PrototypeRegistry;
 USING_NS_CC;
 
 #define SET_SCALE 0.15//对棋子模型大小的缩放设置
@@ -26,7 +28,7 @@ USING_NS_CC;
 #define PRICE_STAR3_GRADE3 23//3星3阶卡的费用
 #define CHESS_ATK 10
 #define CHESS_HEALTH 100
-class Chess :public cocos2d::Sprite
+class Chess :public cocos2d::Sprite, public Prototype
 {
 
 public://此处放属性变量
@@ -84,6 +86,10 @@ public://此处放属性变量
 	HealthBar* healthBar;//血条
 	BlueBar* bluebar;//蓝条
 public:
+	// refractored with prototype pattern
+	// 克隆方法
+	Prototype* clone() const override {};
+
 	//初始化棋子
 	static Chess* create();
 

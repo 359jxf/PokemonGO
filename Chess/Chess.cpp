@@ -1,10 +1,19 @@
 #include "cocos2d.h"
 #include "Chess.h"
-#include"ChessFactory.h"
+// #include"ChessFactory.h"
+#include "PrototypeRegistry.h"
 #include "GridMap.h"
+
 USING_NS_CC; 
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
+
+// refractored with prototype pattern
+// 克隆方法
+Prototype* Chess::clone() const override {
+	return new Chess(*this); // 克隆自身
+}
+
 Chess* Chess::create()
 {
     try {//如果在 new Chess() 或 chessExample->init() 的过程中抛出异常，那么异常信息将被捕获并通过 CCLOG 输出。
@@ -80,7 +89,9 @@ bool Chess::isAtSeat() const
 
 Chess* Chess::createByIdAndStar(int id, int star)//这里的star是形参，表示升级次数，它的变化不影响棋子实际星级
 {
-    Chess* chess = ChessFactory::createChessById(id);//此方法创建棋子，初始实际星级为1
+    // Chess* chess = ChessFactory::createChessById(id);//此方法创建棋子，初始实际星级为1
+	Chess* chess = PrototypeRegistry::getById(id);// refractored with prototype pattern
+
     while (star > 1)//若传入星级是2，升级一次；星级是3，升级两次
     {
         chess->upgrade();

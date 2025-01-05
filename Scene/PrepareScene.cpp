@@ -212,7 +212,8 @@ void PrepareScene::prepareSceneOnMouseDown(Event* event)
         store->selectStore(event, mousePosition, preSeats->isFull());//store监听函数
         if (store->chessIdHaveBought != -1)//成功购买
         {
-            Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);//生成棋子实例
+            //Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);
+			Chess* chess = PrototypeRegistry::getById(store->chessIdHaveBought);// refractored with prototype pattern
             chess->maxHP = chess->health;
             if (chess)//棋子存在
             {
