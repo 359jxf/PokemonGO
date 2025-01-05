@@ -18,13 +18,17 @@
 
 #include "cocos2d.h"
 #include "Chess.h"
+#include "PluginManager.h"
 
 
 USING_NS_CC;
 class ChessFactory
 {
 public:
-	static Chess* createChessById(int id);//创建不同id的1星棋子
+	ChessFactory(PluginManager& pluginManager);
+	Chess* createChessById(int id);//创建不同id的1星棋子
+private:
+	PluginManager& pluginManager;//Refactored with Plugin Pattern
 };
 
 #endif

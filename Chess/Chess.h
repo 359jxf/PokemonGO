@@ -11,150 +11,116 @@ class HexCell;
 class Seat;
 // class ChessFactory;
 class PrototypeRegistry;
+class ChessState;
+
 USING_NS_CC;
 
-#define SET_SCALE 0.15//¶ÔÆå×ÓÄ£ĞÍ´óĞ¡µÄËõ·ÅÉèÖÃ
-#define MAX_ID 8//×î¶à¿¨ÅÆÊı
-#define PRICE_STAR1_GRADE1 1//1ĞÇ1½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR1_GRADE2 2//1ĞÇ2½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR1_GRADE3 5//1ĞÇ3½×¿¨µÄ·ÑÓÃ
+#define SET_SCALE 0.15//å¯¹æ£‹å­æ¨¡å‹å¤§å°çš„ç¼©æ”¾è®¾ç½®
+#define MAX_ID 8//æœ€å¤šå¡ç‰Œæ•°
+#define PRICE_STAR1_GRADE1 1//1æ˜Ÿ1é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR1_GRADE2 2//1æ˜Ÿ2é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR1_GRADE3 5//1æ˜Ÿ3é˜¶å¡çš„è´¹ç”¨
 
-#define PRICE_STAR2_GRADE1 2//2ĞÇ1½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR2_GRADE2 5//2ĞÇ2½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR2_GRADE3 14//2ĞÇ3½×¿¨µÄ·ÑÓÃ
+#define PRICE_STAR2_GRADE1 2//2æ˜Ÿ1é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR2_GRADE2 5//2æ˜Ÿ2é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR2_GRADE3 14//2æ˜Ÿ3é˜¶å¡çš„è´¹ç”¨
 
-#define PRICE_STAR3_GRADE1 3//3ĞÇ1½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR3_GRADE2 8//3ĞÇ2½×¿¨µÄ·ÑÓÃ
-#define PRICE_STAR3_GRADE3 23//3ĞÇ3½×¿¨µÄ·ÑÓÃ
+#define PRICE_STAR3_GRADE1 3//3æ˜Ÿ1é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR3_GRADE2 8//3æ˜Ÿ2é˜¶å¡çš„è´¹ç”¨
+#define PRICE_STAR3_GRADE3 23//3æ˜Ÿ3é˜¶å¡çš„è´¹ç”¨
 #define CHESS_ATK 10
 #define CHESS_HEALTH 100
-class Chess :public cocos2d::Sprite, public Prototype
+
+// Refactored with Decorator and Prototype Pattern 
+//class Chess :public cocos2d::Sprite
+class Chess : public cocos2d::Sprite, public IChess, public Prototype
 {
+private:
+	ChessState* currentState = nullptr; // Refactored with State Pattern
 
-public://´Ë´¦·ÅÊôĞÔ±äÁ¿
+public://æ­¤å¤„æ”¾å±æ€§å˜é‡
 
-	Vec2 atGridPosition = Vec2(-1, -1);//¸ÃÆå×ÓËù´¦µÄÆåÅÌÏà¶Ô×ø±ê,ÊÇÒ»¸öÓëcoordinateChessÏà¶ÔÓ¦µÄÎ»ÖÃ×ø±ê,¼ÇµÃÖÃÎª-1£¡
+	Vec2 atGridPosition = Vec2(-1, -1);//è¯¥æ£‹å­æ‰€å¤„çš„æ£‹ç›˜ç›¸å¯¹åæ ‡,æ˜¯ä¸€ä¸ªä¸coordinateChessç›¸å¯¹åº”çš„ä½ç½®åæ ‡,è®°å¾—ç½®ä¸º-1ï¼
 
-	int atSeatPosition = -1;//¸ÃÆå×ÓËù´¦µÄ±¸Õ½Ï¯Ïà¶Ô×ø±ê£¬ÓëSeat.numberÏà¶ÔÓ¦£¬¼ÇµÃÖÃÎª-1£¡
+	int atSeatPosition = -1;//è¯¥æ£‹å­æ‰€å¤„çš„å¤‡æˆ˜å¸­ç›¸å¯¹åæ ‡ï¼Œä¸Seat.numberç›¸å¯¹åº”ï¼Œè®°å¾—ç½®ä¸º-1ï¼
 
-	bool isDragging = false;//±»ÍÏ¶¯µÄÅĞ¶Ï
+	bool isDragging = false;//è¢«æ‹–åŠ¨çš„åˆ¤æ–­
 
-	std::string name;//Ãû×Ö
+	std::string name;//åå­—
 
-	int id;//¿¨ÅÆid
+	int id;//å¡ç‰Œid
 
-	int star;//¿¨ÅÆĞÇ¼¶
+	int star;//å¡ç‰Œæ˜Ÿçº§
 
-	int ATK = CHESS_ATK;//¹¥»÷Á¦
+	int ATK = CHESS_ATK;//æ”»å‡»åŠ›
 
-	int growATK;//³É³¤¹¥»÷ÊôĞÔ
+	int growATK;//æˆé•¿æ”»å‡»å±æ€§
 
-	int growHP;//³É³¤ÉúÃüÊôĞÔ
+	int growHP;//æˆé•¿ç”Ÿå‘½å±æ€§
 
-	float attackSpeed ;//¹¥»÷ËÙ¶È£¬·¶Î§Îª0-9
+	float attackSpeed ;//æ”»å‡»é€Ÿåº¦ï¼ŒèŒƒå›´ä¸º0-9
 
-	float moveSpeed = 1.0;//ÒÆ¶¯ËÙ¶È
+	float moveSpeed = 1.0;//ç§»åŠ¨é€Ÿåº¦
 
-	int health = CHESS_HEALTH;//ÉúÃüÖµ£¬³õÊ¼»¯100
+	int health = CHESS_HEALTH;//ç”Ÿå‘½å€¼ï¼Œåˆå§‹åŒ–100
 
-	int maxHP;//ÉúÃüÉÏÏŞ
+	int maxHP;//ç”Ÿå‘½ä¸Šé™
 
-	int blueBar;//´óĞ´µÄBarÊÇÀ¶ÌõÉÏÏŞ£¬Ğ¡Ğ´µÄbarÊÇµ±Ç°À¶ÌõÖµ
+	int blueBar;//å¤§å†™çš„Baræ˜¯è“æ¡ä¸Šé™ï¼Œå°å†™çš„baræ˜¯å½“å‰è“æ¡å€¼
 
-	int currentBlueBar = 0;//µ±Ç°À¶Ìõ
+	int currentBlueBar = 0;//å½“å‰è“æ¡
 
-	bool enable_skill = false;//ÄÜ·ñ·Å¼¼ÄÜ
+	bool enable_skill = false;//èƒ½å¦æ”¾æŠ€èƒ½
 
-	int skillCount = 0;//Ê¹ÓÃ¼¼ÄÜ´ÎÊı
+	int skillCount = 0;//ä½¿ç”¨æŠ€èƒ½æ¬¡æ•°
 
-	int attackRange;//¹¥»÷·¶Î§
+	int attackRange;//æ”»å‡»èŒƒå›´
 
-	int price;//³öÊÛ¼Û¸ñ
+	int price;//å‡ºå”®ä»·æ ¼
 
-	int originalCost;//¹ºÂòÊ±µÄ·ÑÓÃ
+	int originalCost;//è´­ä¹°æ—¶çš„è´¹ç”¨
 
-	bool isMelee;//1µÄÊ±ºò±íÊ¾½üÕ½£¬0µÄÊ±ºò±íÊ¾Ô¶³Ì
+	bool isMelee;//1çš„æ—¶å€™è¡¨ç¤ºè¿‘æˆ˜ï¼Œ0çš„æ—¶å€™è¡¨ç¤ºè¿œç¨‹
 
-	int playerNumber;//Æå×ÓËùÊôµÄÍæ¼Ò±àºÅ
+	int playerNumber;//æ£‹å­æ‰€å±çš„ç©å®¶ç¼–å·
 
-	enum State { Idle, Moving, Attacking, Dead };
+	//enum State { Idle, Moving, Attacking, Dead };
 
-	State currentState = Idle;//±£´æµ±Ç°Æå×Ó×´Ì¬
+	//State currentState = Idle;//ä¿å­˜å½“å‰æ£‹å­çŠ¶æ€
 
-	bool isAnimationPlaying = false;//ÊÇ·ñÕıÔÚ²¥·Å¶¯»­
+	bool isAnimationPlaying = false;//æ˜¯å¦æ­£åœ¨æ’­æ”¾åŠ¨ç”»
 
-	HealthBar* healthBar;//ÑªÌõ
-	BlueBar* bluebar;//À¶Ìõ
+	HealthBar* healthBar;//è¡€æ¡
+	BlueBar* bluebar;//è“æ¡
 public:
-	// refractored with prototype pattern
-	// ¿ËÂ¡·½·¨
+	// Refactored with Decorator Pattern
+	// IChessä¸­å‡½æ•°çš„å®ç°
+	Chess();
+	~Chess();
+	int getId() const override;
+	int getStar() const override;
+	bool isInGrid() const override;
+	bool isAtSeat() const override;
+	void moveAction(GridMap* gridMap) override;
+	void attackAction(GridMap* gridMap) override;
+	void deadAction(GridMap* gridMap) override;
+	void getHurt(int ATK) override;
+	void initHealthBar() override;
+	void initBlueBar() override;
+	void upgrade() override;
+	void upgradeToSecond(const std::string& filename) override;
+	void upgradeToThird(const std::string& filename) override;
+	void reverseImg() override;
+	void updateInBattle(float dt, GridMap* gridMap) override;
+	void changeState(ChessState* newState) override; // Refactored with State Pattern
+	bool isEnemyInAttackRange(GridMap* gridMap, std::vector<HexCell*>& enemyChessAround) override;
+	void deleteChess() override;
+	Chess* create() override;
+	Chess* create(const std::string& filename) override;
+	Chess* createByIdAndStar(int id, int star) override;
+  
+  // refractored with prototype pattern
 	Prototype* clone() const override {};
-
-	//³õÊ¼»¯Æå×Ó
-	static Chess* create();
-
-	//³õÊ¼»¯Æå×Ó,ÓÃÎÄ¼şÃû³õÊ¼»¯
-	static Chess* create(const std::string& filename);
-
-	//É¾³ıÆå×Ó
-	void deleteChess();
-
-	//»ñµÃÆå×Óid
-	int getId()const;
-
-	//»ñµÃÆå×ÓĞÇ¼¶
-	int getStar()const;
-
-	//ÅĞ¶ÏÆå×ÓÊÇ·ñÔÚÆå¸ñ
-	bool isInGrid()const;
-
-	//ÅĞ¶ÏÆå×ÓÊÇ·ñÔÚ±¸Õ½Ï¯ÉÏ
-	bool isAtSeat()const;
-
-	// ¸ù¾İÊäÈëµÄidÖµºÍĞÇ¼¶´´½¨Ò»¸öÆå×ÓÊµÀı
-	static Chess* createByIdAndStar(int id, int star);
-
-	//µ¥¸öÆå×ÓµÄ³õÊ¼»¯
-	virtual bool init() override;
-
-	//Æå×ÓµÄ½ø»¯º¯Êı
-	virtual void upgrade();
-
-	//½ø»¯³ÉµÈ¼¶2£¬ÔÚÈıºÏÒ»Ê±´¥·¢
-	virtual void upgradeToSecond(const std::string& filename);
-
-	//½ø»¯³ÉµÈ¼¶3£¬ÔÚÈıºÏÒ»Ê±´¥·¢
-	virtual void upgradeToThird(const std::string& filename);
-
-	//½«Õâ¸öÆå×Ó·´×ª
-	void reverseImg();
-
-	//ÒÆ¶¯º¯Êı£¨°üº¬Æä»Øµ÷º¯Êı£©
-	virtual void moveAction(GridMap* gridMap);
-
-	//¹¥»÷º¯Êı
-	virtual void attackAction(GridMap* gridMap);
-
-	//ËÀÍöº¯Êı
-	virtual void deadAction(GridMap* gridMap);
-
-	//µôÑªº¯Êı
-	virtual void getHurt(int ATK);
-
-	//Ê¹ÓÃ¼¼ÄÜ
-	virtual void useSkill();
-
-	//Ã¿Ö¡µ÷ÓÃÒÔ¸üĞÂ×´Ì¬
-	void updateInBattle(float dt, GridMap* gridMap);
-
-	//¸Ä±ä×´Ì¬µÄº¯Êı
-	void changeState(State newState);
-	bool isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessAround);
-
-	//³õÊ¼»¯ÑªÌõÀ¶Ìõ
-	void initHealthBar();
-	void initBlueBar();
 };
-
 
 #endif // Chess.h
