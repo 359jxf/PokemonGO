@@ -1,4 +1,4 @@
-#include "cocos2d.h"
+﻿#include "cocos2d.h"
 #include "Chess.h"
 // #include"ChessFactory.h"
 #include "PrototypeRegistry.h"
@@ -12,7 +12,7 @@ USING_NS_CC;
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
 
-// refractored with prototype pattern
+/ refractored with prototype pattern
 // 克隆方法
 Prototype* Chess::clone() const override {
 	return new Chess(*this); // 克隆自身
@@ -29,7 +29,7 @@ Chess::~Chess()
 
 Chess* Chess::create()
 {
-    try {//����� new Chess() �� chessExample->init() �Ĺ������׳��쳣����ô�쳣��Ϣ��������ͨ�� CCLOG �����
+    try {//如果在 new Chess() 或 chessExample->init() 的过程中抛出异常，那么异常信息将被捕获并通过 CCLOG 输出。
         Chess* chessExample = new Chess();
         if (chessExample && chessExample->init()) {
             chessExample->autorelease();
@@ -38,7 +38,7 @@ Chess* Chess::create()
         CC_SAFE_DELETE(chessExample);
     }
     catch (const std::exception& e) {
-        // �����쳣ʱ�Ĵ����߼�
+        // 捕获到异常时的处理逻辑
         CCLOG("Exception caught: %s", e.what());
     }
     return nullptr;
@@ -55,7 +55,7 @@ Chess* Chess::create(const std::string& filename)
         CC_SAFE_DELETE(chessExample);
     }
     catch (const std::exception& e) {
-        // �����쳣ʱ�Ĵ����߼�
+        // 捕获到异常时的处理逻辑
         CCLOG("Exception caught: %s", e.what());
     }
     return nullptr;
@@ -100,7 +100,7 @@ bool Chess::isAtSeat() const
     return atSeatPosition >= 0;
 }
 
-Chess* Chess::createByIdAndStar(int id, int star)//�����star���βΣ���ʾ�������������ı仯��Ӱ������ʵ���Ǽ�
+Chess* Chess::createByIdAndStar(int id, int star)//这里的star是形参，表示升级次数，它的变化不影响棋子实际星级
 {
 
 
@@ -117,23 +117,23 @@ Chess* Chess::createByIdAndStar(int id, int star)//�����star����
     return chess;
 }
 
-//�����������Ѱ���ַ����е�һ���ַ����������滻
-//original��ԭ�ַ�����toReplace�Ǳ��滻���ַ�����newString���滻����ַ���
+//这个函数用于寻找字符串中的一个字符串并将他替换
+//original是原字符串，toReplace是被替换的字符串，newString是替换后的字符串
 std::string replaceSubstring(const std::string& original, const std::string& toReplace, const std::string& newString) {
     std::string result = original;
     size_t pos = 0;
     //���ҵ���toReplace�ַ���������ѭ��
     while ((pos = result.find(toReplace, pos)) != std::string::npos) {
-        result.replace(pos, toReplace.length(), newString);//ִ���滻
+        result.replace(pos, toReplace.length(), newString);//执行替换
         
-        pos += newString.length();// ����λ�ã�ǰ�����ַ����ĳ���
+        pos += newString.length();// 更新位置，前进新字符串的长度
     }
     return result;
 }
 
 void Chess::upgrade()
 {   
-    if (this->star == 1)//�����star������ʵ���Ǽ�
+    if (this->star == 1)//这里的star是棋子实际星级
         upgradeToSecond(replaceSubstring(name, "1", "2"));
     else if (this->star == 2)
         upgradeToThird(replaceSubstring(name, "2", "3"));
@@ -149,7 +149,7 @@ void Chess::upgradeToSecond(const std::string& filename)
     price=price*3-1;//Ǯ
     name = filename;
     star = 2;
-    //�ڴ˴�����ԭ�ȶ���ĸ�������
+    //在此处更新原先对象的各种数据
     ATK += growATK;
     maxHP += growHP;
 }
@@ -161,7 +161,7 @@ void Chess::upgradeToThird(const std::string& filename)
     price = price * 3 - 1;//Ǯ
     name = filename;
     star = 3;
-    //�ڴ˴�����ԭ�ȶ���ĸ�������
+    //在此处更新原先对象的各种数据
     ATK += growATK;
     maxHP += growHP;
 }
@@ -176,29 +176,29 @@ void Chess::moveAction(GridMap* gridMap)
 {
     HexCell* fromCell = gridMap->getCellAtPosition(atGridPosition);
     HexCell* toCell = gridMap->FindBattle(this, fromCell);
-    //���·��
+    //获得路径
     Vector<HexCell*> movePath;
     gridMap->FindPath(movePath, this, fromCell, toCell, attackRange);
     if (movePath.size() <= 0)
         return;
-    //�ÿ�ʼ���ƶ�λ��ֹͣ��Ԥ�����ƶ�·�ϵ����ӿ�ʼ��Ԥ��
+    //让开始的移动位置停止被预定，移动路上的棋子开始被预定
     fromCell->isBooked = false;
     movePath.at(0)->isBooked = true;
 
-    //�����ӵ�ǰλ��Ϊ��㣬Ŀ��λ��Ϊ�յ㣬����ʱ��Ϊ��������ƶ��ٶ�
+    //以棋子当前位置为起点，目标位置为终点，持续时间为距离除以移动速度
     auto targetPosition = movePath.at(0)->getPosition();
     auto distance = targetPosition.distance(this->getPosition());
     auto move_Action = MoveTo::create(distance / (moveSpeed * 100), targetPosition);
 
     auto callback = CallFunc::create([=]() {
-        // ������ɺ�Ļص�,�����ӷ��õ��µ�λ��
+        // 动画完成后的回调,将棋子放置到新的位置
         gridMap->addChessToGrid(this, movePath.at(0));
         gridMap->removeChessOfGrid(fromCell);
-        //ע��ص���������Ҫ��������book��λ��
+        //注意回调函数中需要重新设置book的位置
         fromCell->isBooked = false;
         movePath.at(0)->isBooked = true;
         isAnimationPlaying = false;
-        this->changeState(Idle); // ������״̬
+        this->changeState(Idle); // 或其他状态
         });
 
     auto sequence = Sequence::create(move_Action, callback, nullptr);
@@ -208,12 +208,12 @@ void Chess::moveAction(GridMap* gridMap)
 
 void Chess::attackAction(GridMap* gridMap)
 {
-    //�Ȼ�ù�������
+    //先获得攻击对象
     Vector<HexCell*>enemyChessAround;
     bool findEnemy = isEnemyInAttackRange(gridMap, enemyChessAround);
-    int enemyChess = enemyChessAround.size();//enemyChessAround���ǻ�������еĹ�����Χ�ڵĵз�����
-    //��һ��Vector�洢���еĵз������Ǳ��ں���Ⱥ�幥��
-    //Ϊ��˵������������
+    int enemyChess = enemyChessAround.size();//enemyChessAround这是获得了所有的攻击范围内的敌方棋子
+    //用一个Vector存储所有的敌方棋子是便于后续群体攻击
+    //为空说明对面死完了
     if (enemyChess == 0)
     {
         changeState(Idle);
@@ -221,20 +221,20 @@ void Chess::attackAction(GridMap* gridMap)
     }
     Chess* attackObject = enemyChessAround.at(0)->chessInGrid;
 
-    //��ǰ���ͷż���
+    //当前能释放技能
     if (this->enable_skill) {
         useSkill();
     }
     
-    //�ص�������Ŀ������˺�
+    //回调函数对目标产生伤害
     auto callback = CallFunc::create([=]() {
-        // ������ɺ�Ļص�,��Ŀ��ʵ������˺�
+        // 动画完成后的回调,对目标实际造成伤害
         if (attackObject) {
             attackObject->getHurt(ATK);
             if (attackObject->health <= 0)
                 attackObject->changeState(Dead);
         }
-        //����,�ż���ʱ����
+        //蓝条,放技能时不变
         if(!enable_skill)
         {
             this->currentBlueBar += 5;
@@ -248,23 +248,23 @@ void Chess::attackAction(GridMap* gridMap)
         }
 
         isAnimationPlaying = false;
-        this->changeState(Idle); // ������״̬
+        this->changeState(Idle); // 或其他状态
         });
-    //�ص�������Ŀ������˺�
+    //回调函数对目标产生伤害
 
-    //��ս����
+    //近战攻击
     if(isMelee==1){
-        //���ŶԹ�������,�����Ƕ�һ��,Զ��Ŀ����Ҫ�޸�
+        //播放对攻击对象,设想是顶一下,远程目标需要修改
         Vec2 position = attackObject->getPosition() - this->getPosition();
         position = Vec2(position.x / ATTACK_MOVE, position.y / ATTACK_MOVE);
 
         float attackDuration = 1.0f / (10 * attackSpeed);
         auto moveBackAction = MoveBy::create(attackDuration, position);
-        auto moveBackReverseAction = moveBackAction->reverse();  // �ƻ�ԭʼλ��
+        auto moveBackReverseAction = moveBackAction->reverse();  // 移回原始位置
         auto sequence1 = Sequence::create(moveBackAction, moveBackReverseAction, callback, nullptr);
         this->runAction(sequence1);
     }
-    //Զ�̹�������������
+    //远程攻击，发射星星
     else {
         auto bullet = Sprite::create();
         bullet->setTexture("SliderNode_Normal.png");
@@ -289,19 +289,19 @@ void Chess::deadAction(GridMap* gridMap)
         this->stopAllActions();
     }
 
-    // ���������߼�
+    // 处理死亡逻辑
     auto fadeOut = FadeOut::create(0.3f);
 
-    // ����Sequence�������������������ͻص��������Ƴ��ڵ���߼���
+    // 创建Sequence动作，包含淡出动作和回调函数（移除节点的逻辑）
     auto sequence = Sequence::create(
         fadeOut,
         CallFunc::create([this, gridMap]() {
-            this->removeFromParentAndCleanup(true); // �Ƴ���ִ����������
+            this->removeFromParentAndCleanup(true); // 移除并执行清理操作
             }),
         nullptr
-                );
+    );
 
-    // �Խ�ɫ��Ѫ���������ֱ�Ӧ�ö�����Sequence����
+    // 对角色、血条和蓝条分别应用独立的Sequence动作
     this->runAction(sequence);
     //this->healthBar->runAction(fadeOut);
     //this->bluebar->runAction(fadeOut);
@@ -312,15 +312,15 @@ void Chess::deadAction(GridMap* gridMap)
 
 void Chess::getHurt(int ATK)
 {
-    //Ѫ������
+    //血条处理
     this->health -= ATK;
     float percentage_health = 100.0 * health / maxHP;
     if (percentage_health < 0)
         percentage_health = 0;
     healthBar->setPercentage(percentage_health);
 
-    //��������
-    if(!enable_skill)
+    //蓝条处理
+    if (!enable_skill)
     {
         this->currentBlueBar += 5;
         float percentage_blue = 100.0 * currentBlueBar / this->blueBar;
@@ -331,7 +331,7 @@ void Chess::getHurt(int ATK)
         }
         bluebar->setPercentage(percentage_blue);
     }
-    // �ɴ�����Ѫ������������Ҫ 
+    // 可创建掉血动画，但不必要 
 }
 
 void Chess::useSkill()
@@ -339,69 +339,69 @@ void Chess::useSkill()
     CCLOG("USESKILL");
 
 }
-//dt��ÿһ֮֡���ʱ��ʵʱ����״̬
+//dt是每一帧之间的时间差，实时更新状态
 void Chess::updateInBattle(float dt, GridMap* gridMap)
 {
     switch (currentState) {
-        case Idle: {
-            //����Ƿ��пɹ����ĵ���
-            Vector<HexCell*>a;
-            if (isEnemyInAttackRange(gridMap, a))
-                // ����У��л�������״̬
-                changeState(Attacking);
-            else
-                // ���û�У������ƶ�
-                changeState(Moving);
-            break;
-        }
-        case Moving: {
-            // ִ���ƶ��߼�
-            // ����Ŀ�ĵغ��л������л򹥻�״̬
+    case Idle: {
+        //检查是否有可攻击的敌人
+        Vector<HexCell*>a;
+        if (isEnemyInAttackRange(gridMap, a))
+            // 如果有，切换到攻击状态
+            changeState(Attacking);
+        else
+            // 如果没有，尝试移动
+            changeState(Moving);
+        break;
+    }
+    case Moving: {
+        // 执行移动逻辑
+        // 到达目的地后，切换到空闲或攻击状态
 
-            if (!isAnimationPlaying) {//ִ��move�߼���ǰ���ǲ��ܲ��Ŷ���
-                moveAction(gridMap);
-            }
-            break;
+        if (!isAnimationPlaying) {//执行move逻辑的前提是不能播放动画
+            moveAction(gridMap);
         }
-        case Attacking: {
-            if (!isAnimationPlaying)//ֻ���ڷǲ��Ŷ���ʱ����
-            {
-                //��������
-                attackAction(gridMap);
-            }
-            break;
+        break;
+    }
+    case Attacking: {
+        if (!isAnimationPlaying)//只有在非播放动画时调用
+        {
+            //攻击动作
+            attackAction(gridMap);
         }
-        case Dead: {
-            deadAction(gridMap);
+        break;
+    }
+    case Dead: {
+        deadAction(gridMap);
 
-            break;
-        }
-        default:
-            break;
+        break;
+    }
+    default:
+        break;
     }
 }
 
 void Chess::changeState(State newState)
 {
-    if (currentState == newState) return; // ״̬δ�ı�
+    if (currentState == newState) return;  // 状态未改变
     currentState = newState;
 }
 
 Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {
-    //�������ڸ�������
+    //创建相邻格子容器
     Vector<HexCell*> neighbors;
-    //Ŀ�����λ��
+    //目标格子位置
     int x = cell->coordinateInBoard.x;
     int y = cell->coordinateInBoard.y;
 
-    // ��Щ��ż���е����ڸ���
+    // 这些是偶数行的相邻格子
     Vec2 evenOffsets[6] = { {+1,  0}, { 0, -1}, {-1, -1},
                            {-1,  0}, {-1, +1}, { 0, +1} };
-    // ��Щ�������е����ڸ���
+    // 这些是奇数行的相邻格子
     Vec2 oddOffsets[6] = { {+1,  0}, {+1, -1}, { 0, -1},
                            {-1,  0}, { 0, +1}, {+1, +1} };
 
-    //�����ж���Χ�����������Ƿ������̺Ϸ���Χ������������
+    //依次判断周围的六个格子是否在棋盘合法范围，并加入容器
     for (int i = 0; i < 6; ++i) {
         Vec2 offset = (y % 2 == 0) ? evenOffsets[i] : oddOffsets[i];
         Vec2 neighborCoord = Vec2(x + offset.x, y + offset.y);
@@ -412,16 +412,16 @@ Vector<HexCell*> getNeighbors(HexCell* cell, GridMap* gridMap) {
     return neighbors;
 }
 
-//enemyChessAround���湥����Χ�ĵз�����
+//enemyChessAround保存攻击范围的敌方棋子
 bool Chess::isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessAround) {
-    std::set<Vec2> checkedCells; // ���ڱ����ظ����
-    std::queue<Vec2> cellsToCheck; // ���ڱ�������ĸ�������
-    cellsToCheck.push(atGridPosition); // ��ǰ�������ڵĸ���
+    std::set<Vec2> checkedCells; // 用于避免重复检查
+    std::queue<Vec2> cellsToCheck; // 用于保存待检查的格子坐标
+    cellsToCheck.push(atGridPosition); // 当前棋子所在的格子
     checkedCells.insert(atGridPosition);
 
     int boolFlag = 0;
     int currentRange = 1;
-    //�����������
+    //广度优先搜索
     while (!cellsToCheck.empty() && currentRange <= attackRange) {
         int size = cellsToCheck.size();
         for (int i = 0; i < size; ++i) {
@@ -429,14 +429,14 @@ bool Chess::isEnemyInAttackRange(GridMap* gridMap, Vector<HexCell*>& enemyChessA
             cellsToCheck.pop();
 
             HexCell* currentCell = gridMap->getCellAtPosition(currentCellCoord);
-            Vector<HexCell*> neighbors = getNeighbors(currentCell, gridMap); // ��ȡ�ھӵĺ���
+            Vector<HexCell*> neighbors = getNeighbors(currentCell, gridMap); // 获取邻居的函数
 
             for (auto& neighbor : neighbors) {
                 Vec2 coord = neighbor->coordinateInBoard;
                 if (checkedCells.find(coord) == checkedCells.end()) {
                     if (neighbor->chessInGrid && neighbor->chessInGrid->playerNumber != playerNumber) {
                         enemyChessAround.pushBack(neighbor);
-                        boolFlag++; // �ҵ��з�����
+                        boolFlag++; // 找到敌方棋子
                     }
                     cellsToCheck.push(coord);
                     checkedCells.insert(coord);
@@ -469,15 +469,12 @@ void Chess::initBlueBar()
 void update(EventType event, Vec2 position) override {
     switch (event) {
     case EventType::MouseDown:
-        // ���������ĸ���
         handleMouseDown(position);
         break;
     case EventType::MouseMove:
-        // ��������϶����߼�
         handleMouseMove(position);
         break;
     case EventType::MouseUp:
-        // ��������ͷŵ��߼�
         handleMouseUp(position);
         break;
     default:
@@ -486,25 +483,22 @@ void update(EventType event, Vec2 position) override {
 }
 
 void handleMouseDown(Vec2 position) {
-        //ʵ���жϵ���ʱ�Ƿ�������սϯ
     HexCell* cell = gridMap->mouseInWhichCell(mousePosition);
     Seat* seat = preSeats->mouseInWhichSeat(mousePosition);
-    //�����������������
     if (cell && cell->chessInGrid)
     {
         selectedChess = cell->chessInGrid;
         selectedChess->isDragging = true;
 
-        gridMap->removeChessOfGrid(cell);//��������Ƴ�
+        gridMap->removeChessOfGrid(cell);
         myPlayer->removeChess(selectedChess);
     }
-    //�б�սϯ����ϯλ�ϴ�������
     if (seat && seat->chessInSeat)
     {
         selectedChess = seat->chessInSeat;
         selectedChess->isDragging = true;
 
-        preSeats->removeChessOfSeat(seat);//�Ƴ�
+        preSeats->removeChessOfSeat(seat);
         myPlayer->removeChess(selectedChess);
     }
 
@@ -512,7 +506,6 @@ void handleMouseDown(Vec2 position) {
 
 void handleMouseMove(Vec2 position) {
     if (this->isDragging) {
-        // �������ӵ�λ�ã��������
         this->setPosition(position);
         CCLOG("Chess: Moving to position (%f, %f)", position.x, position.y);
     }
@@ -520,24 +513,19 @@ void handleMouseMove(Vec2 position) {
 
 void handleMouseUp(Vec2 position) {
     if (this->isDragging) {
-        // ֹͣ�϶�
         this->isDragging = false;
-        // �ж����̧���λ���Ƿ���Ч�����Է������ӵĵط�
         HexCell* cell = gridMap->mouseInWhichCell(position);
         Seat* seat = preSeats->mouseInWhichSeat(position);
 
         if (cell && !cell->chessInGrid && cell->isMine) {
-            // �������ӵ�������
             gridMap->addChessToGrid(this, cell);
             CCLOG("Chess placed on grid.");
         }
         else if (seat && !seat->chessInSeat) {
-            // �������ӵ���սϯ��
             preSeats->addChessToSeat(this, seat);
             CCLOG("Chess placed on seat.");
         }
-        else {
-            // ������ſ���λ����Ч�������˻�ԭ����λ��
+        else {s
             this->setPosition(this->originalPosition);
             CCLOG("Chess returned to original position.");
         }
