@@ -4,9 +4,8 @@
     "\\Chess",
     "\\ChessPlugin",
     "\\ChessRelated",
-    "\\Map",
-    "\\Player"
+    "\\Map"
   ],
-  "SelectedNode": "\\ChessPlugin\\PluginManager.cpp",
+  "SelectedNode": "\\AppDelegate.cpp",
   "PreviewInSolutionExplorer": false
 }
