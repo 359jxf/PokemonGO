@@ -13,7 +13,7 @@ USING_NS_CC;
 #define MoveTime 1.0f
 #define ATTACK_MOVE 5
 
-/ refractored with prototype pattern
+// refactored with prototype pattern
 // 克隆方法
 Prototype* Chess::clone() const override {
 	return new Chess(*this); // 克隆自身
@@ -63,7 +63,9 @@ Chess* Chess::create(const std::string& filename)
     }
     return nullptr;
 }
-
+// Refactored with Decorator Pattern
+// 留给Decorator实现
+/*
 bool Chess::init()
 {
     if (!Node::init()) {
@@ -71,7 +73,9 @@ bool Chess::init()
         return false;
     }
     return true;
-}
+}*/
+
+
 void Chess::deleteChess()
 {
     if (this)
@@ -114,6 +118,7 @@ Chess* Chess::createByIdAndStar(int id, int star)//这里的star是形参，表�
         chess->upgrade();
         star--;
     }
+    chess->currentState = new IdleState(chess);// Refactored with State Pattern
     chess->maxHP = chess->health;
     chess->initHealthBar();
     chess->initBlueBar();

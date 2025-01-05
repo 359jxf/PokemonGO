@@ -121,7 +121,7 @@ public:
 	Chess* create(const std::string& filename) override;
 	Chess* createByIdAndStar(int id, int star) override;
   
-  // refractored with prototype pattern
+  // refactored with prototype pattern
 	Prototype* clone() const override {};
 
 };
