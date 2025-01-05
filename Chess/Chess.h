@@ -37,6 +37,8 @@ USING_NS_CC;
 class Chess : public cocos2d::Sprite, public IChess, public Prototype
 
 {
+private:
+	ChessState* currentState; // Refactored with State Pattern
 
 public://此处放属性变量
 
@@ -84,9 +86,9 @@ public://此处放属性变量
 
 	int playerNumber;//棋子所属的玩家编号
 
-	enum State { Idle, Moving, Attacking, Dead };
+	// enum State { Idle, Moving, Attacking, Dead }; // Refactored with State Pattern
 
-	State currentState = Idle;//保存当前棋子状态
+	// State currentState = Idle;//保存当前棋子状态 // Refactored with State Pattern
 
 	bool isAnimationPlaying = false;//是否正在播放动画
 
@@ -101,9 +103,9 @@ public:
 	int getStar() const override;
 	bool isInGrid() const override;
 	bool isAtSeat() const override;
-	void moveAction(GridMap* gridMap) override;
-	void attackAction(GridMap* gridMap) override;
-	void deadAction(GridMap* gridMap) override;
+	// void moveAction(GridMap* gridMap) override; // Refactored with State Pattern
+	// void attackAction(GridMap* gridMap) override; // Refactored with State Pattern
+	// void deadAction(GridMap* gridMap) override; // Refactored with State Pattern
 	void getHurt(int ATK) override;
 	void initHealthBar() override;
 	void initBlueBar() override;
@@ -111,7 +113,7 @@ public:
 	void upgradeToSecond(const std::string& filename) override;
 	void upgradeToThird(const std::string& filename) override;
 	void reverseImg() override;
-	void updateInBattle(float dt, GridMap* gridMap) override;
+	void updateInBattle(float dt, GridMap* gridMap) override; // Refactored with State Pattern
 	void changeState(ChessState* newState) override; // Refactored with State Pattern
 	bool isEnemyInAttackRange(GridMap* gridMap, std::vector<HexCell*>& enemyChessAround) override;
 	void deleteChess() override;
