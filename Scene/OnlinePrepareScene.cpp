@@ -218,7 +218,8 @@ void OnlinePrepareScene::prepareSceneOnMouseDown(Event* event)
         store->selectStore(event, mousePosition, preSeats->isFull());//store监听函数
         if (store->chessIdHaveBought != -1)
         {
-            Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);
+            //Chess* chess = ChessFactory::createChessById(store->chessIdHaveBought);
+			Chess* chess = PrototypeRegistry::getById(store->chessIdHaveBought);//原型模式
             chess->maxHP = chess->health;
             if (chess)
             {

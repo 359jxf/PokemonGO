@@ -4,13 +4,15 @@
 #include "cocos2d.h"
 #include "HealthBar.h"
 #include "BlueBar.h"
-#include "AudioEngine.h"
-#include "ChessState.h"
+#include"AudioEngine.h"
+#include "Prototype.h"
 class GridMap;
 class HexCell;
 class Seat;
-class ChessFactory;
+// class ChessFactory;
+class PrototypeRegistry;
 class ChessState;
+
 USING_NS_CC;
 
 #define SET_SCALE 0.15//对棋子模型大小的缩放设置
@@ -29,10 +31,9 @@ USING_NS_CC;
 #define CHESS_ATK 10
 #define CHESS_HEALTH 100
 
-
-// Refactored with Decorator Pattern
+// Refactored with Decorator and Prototype Pattern 
 //class Chess :public cocos2d::Sprite
-class Chess : public cocos2d::Sprite, public IChess
+class Chess : public cocos2d::Sprite, public IChess, public Prototype
 {
 private:
 	ChessState* currentState = nullptr; // Refactored with State Pattern
@@ -117,6 +118,9 @@ public:
 	Chess* create() override;
 	Chess* create(const std::string& filename) override;
 	Chess* createByIdAndStar(int id, int star) override;
+  
+  // refractored with prototype pattern
+	Prototype* clone() const override {};
 };
 
 #endif // Chess.h
